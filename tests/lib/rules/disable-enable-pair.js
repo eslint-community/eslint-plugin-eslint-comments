@@ -5,7 +5,7 @@
 "use strict"
 
 const semver = require("semver")
-const eslintVersion = require("eslint/package").version
+const eslintVersion = require("eslint/package.json").version
 const RuleTester = require("eslint").RuleTester
 const rule = require("../../../lib/rules/disable-enable-pair")
 const tester = new RuleTester()

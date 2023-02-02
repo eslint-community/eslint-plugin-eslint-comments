@@ -9,7 +9,7 @@ const path = require("path")
 const spawn = require("cross-spawn")
 const rimraf = require("rimraf")
 const semver = require("semver")
-const eslintVersion = require("eslint/package").version
+const eslintVersion = require("eslint/package.json").version
 
 /**
  * Run eslint CLI command with a given source code.
@@ -35,7 +35,7 @@ function runESLint(code) {
         const chunks = []
         let totalLength = 0
 
-        cp.stdout.on("data", chunk => {
+        cp.stdout.on("data", (chunk) => {
             chunks.push(chunk)
             totalLength += chunk.length
         })
@@ -63,12 +63,9 @@ describe("multi-line eslint-disable-line comments", () => {
             "../../node_modules/@eslint-community/eslint-plugin-eslint-comments"
         )
 
+        fs.mkdirSync(path.dirname(pluginPath), { recursive: true })
         if (fs.existsSync(pluginPath)) {
             rimraf.sync(pluginPath)
-        } else {
-            fs.mkdirSync(
-                path.resolve(__dirname, "../../node_modules/@eslint-community")
-            )
         }
 
         fs.symlinkSync(selfPath, pluginPath, "junction")
@@ -88,12 +85,12 @@ no-undef*/
 `,
         ]) {
             it(code, () =>
-                runESLint(code).then(messages => {
+                runESLint(code).then((messages) => {
                     if (semver.satisfies(eslintVersion, ">=5.0.0")) {
                         assert.strictEqual(messages.length > 0, true)
                     }
                     const normalMessages = messages.filter(
-                        message => message.ruleId != null
+                        (message) => message.ruleId != null
                     )
                     assert.strictEqual(normalMessages.length, 0)
                 })
