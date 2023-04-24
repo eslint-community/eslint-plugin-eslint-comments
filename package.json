@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@mysticatea/eslint-plugin": "^13.0.0",
-    "@types/node": "^14.18.36",
+    "@types/node": "^18.16.0",
     "@vuepress/plugin-pwa": "^1.9.8",
     "babel-eslint": "^10.0.1",
     "cross-spawn": "^6.0.5",
