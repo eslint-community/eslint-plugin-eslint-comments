@@ -42,6 +42,7 @@
     "docs:build": "vuepress build docs",
     "docs:watch": "vuepress dev docs",
     "docs:deploy": "node scripts/deploy",
+    "format": "npx prettier -w . && npm run lint -- --fix",
     "lint": "eslint lib scripts tests",
     "test": "nyc mocha \"tests/lib/**/*.js\" --reporter dot --timeout 8000",
     "coverage": "nyc report --reporter lcov && opener coverage/lcov-report/index.html",
