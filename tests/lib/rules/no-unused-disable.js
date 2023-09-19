@@ -71,6 +71,54 @@ function runESLint(code, reportUnusedDisableDirectives = false) {
     })
 }
 
+/**
+ * Run eslint CLI command with a given source code.
+ * @param {string} code The source code to lint.
+ * @param {boolean} [reportUnusedDisableDirectives] The flag to enable `--report-unused-disable-directives` option.
+ * @returns {Promise<Message[]>} The result message.
+ */
+function runFlatESLint(code, reportUnusedDisableDirectives = false) {
+    const cwd = path.resolve(
+        __dirname,
+        "../../fixtures/lib/no-unused-disable/flat-config"
+    )
+    return new Promise((resolve, reject) => {
+        const cp = spawn(
+            "eslint",
+            [
+                "--stdin",
+                "--stdin-filename",
+                path.join(cwd, "test.js"),
+                "--format",
+                "json",
+                ...(reportUnusedDisableDirectives
+                    ? ["--report-unused-disable-directives"]
+                    : []),
+            ],
+            { stdio: ["pipe", "pipe", "inherit"], cwd }
+        )
+        const chunks = []
+        let totalLength = 0
+
+        cp.stdout.on("data", (chunk) => {
+            chunks.push(chunk)
+            totalLength += chunk.length
+        })
+        cp.stdout.on("end", () => {
+            try {
+                const resultsStr = String(Buffer.concat(chunks, totalLength))
+                const results = JSON.parse(resultsStr)
+                resolve(results[0].messages)
+            } catch (error) {
+                reject(error)
+            }
+        })
+        cp.on("error", reject)
+
+        cp.stdin.end(code)
+    })
+}
+
 describe("no-unused-disable", () => {
     before(() => {
         // Register this plugin.
@@ -170,11 +218,18 @@ var a = b //eslint-disable-line -- description`,
                   ]
                 : []),
         ]) {
-            it(code, () =>
-                runESLint(code).then((messages) => {
-                    assert.strictEqual(messages.length, 0)
+            function assertMessages(messages) {
+                assert.strictEqual(messages.length, 0)
+            }
+
+            it(code, async () => {
+                assertMessages(await runESLint(code))
+            })
+            if (semver.satisfies(Linter.version, ">=8.0.0")) {
+                it(`${code}\n with flat config`, async () => {
+                    assertMessages(await runFlatESLint(code))
                 })
-            )
+            }
         }
     })
 
@@ -927,25 +982,34 @@ var a = b //eslint-disable-line -- description`,
                 ],
             },
         ]) {
-            it(code, () =>
-                runESLint(code, reportUnusedDisableDirectives).then(
-                    (actualMessages) => {
-                        assert.strictEqual(actualMessages.length, errors.length)
-                        for (let i = 0; i < errors.length; ++i) {
-                            const actual = actualMessages[i]
-                            const expected = errors[i]
+            function assertMessages(actualMessages) {
+                assert.strictEqual(actualMessages.length, errors.length)
+                for (let i = 0; i < errors.length; ++i) {
+                    const actual = actualMessages[i]
+                    const expected = errors[i]
 
-                            for (const key of Object.keys(expected)) {
-                                assert.deepStrictEqual(
-                                    actual[key],
-                                    expected[key],
-                                    `'${key}' is not expected.`
-                                )
-                            }
-                        }
+                    for (const key of Object.keys(expected)) {
+                        assert.deepStrictEqual(
+                            actual[key],
+                            expected[key],
+                            `'${key}' is not expected.`
+                        )
                     }
+                }
+            }
+
+            it(code, async () => {
+                assertMessages(
+                    await runESLint(code, reportUnusedDisableDirectives)
                 )
-            )
+            })
+            if (semver.satisfies(Linter.version, ">=8.0.0")) {
+                it(`${code}\n with flat config`, async () => {
+                    assertMessages(
+                        await runFlatESLint(code, reportUnusedDisableDirectives)
+                    )
+                })
+            }
         }
     })
 })
