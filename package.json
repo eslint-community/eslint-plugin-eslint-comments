@@ -32,7 +32,8 @@
     "semver": "^7.5.4",
     "string-replace-loader": "^3.1.0",
     "vue-eslint-editor": "^1.1.0",
-    "vuepress": "^1.9.9"
+    "vuepress": "^1.9.9",
+    "webpack": "^4.47.0"
   },
   "scripts": {
     "preversion": "npm test",

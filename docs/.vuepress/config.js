@@ -1,7 +1,6 @@
 "use strict"
 
 const path = require("path")
-// eslint-disable-next-line @eslint-community/mysticatea/node/no-extraneous-require
 const webpack = require("webpack")
 const { withCategories } = require("../../scripts/lib/rules")
 require("../../scripts/update-docs-headers")
