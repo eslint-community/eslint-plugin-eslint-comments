@@ -85,7 +85,7 @@ jobs:
         run: npm run test
 
       - name: ⬆️ Upload coverage report
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v3
 
   release:
     name: 🚀 Release
@@ -108,7 +108,7 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: 🚀 Release
-        uses: cycjimmy/semantic-release-action@v3
+        uses: cycjimmy/semantic-release-action@v4
         with:
           semantic_version: 19
           branches: |

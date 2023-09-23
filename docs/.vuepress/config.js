@@ -1,7 +1,8 @@
 "use strict"
 
-const path = require('path')
-const webpack = require('webpack')
+const path = require("path")
+// eslint-disable-next-line @eslint-community/mysticatea/node/no-extraneous-require
+const webpack = require("webpack")
 const { withCategories } = require("../../scripts/lib/rules")
 require("../../scripts/update-docs-headers")
 require("../../scripts/update-docs-index")
@@ -27,8 +28,7 @@ module.exports = {
         nav: [
             {
                 text: "Changelog",
-                link:
-                    "https://github.com/eslint-community/eslint-plugin-eslint-comments/releases",
+                link: "https://github.com/eslint-community/eslint-plugin-eslint-comments/releases",
             },
         ],
 
@@ -40,7 +40,7 @@ module.exports = {
                 ...withCategories.map(({ category, rules }) => ({
                     title: `Rules in ${category}`,
                     collapsable: false,
-                    children: rules.map(rule => `/rules/${rule.name}`),
+                    children: rules.map((rule) => `/rules/${rule.name}`),
                 })),
             ],
         },
@@ -50,18 +50,18 @@ module.exports = {
     configureWebpack: {
         plugins: [
             new webpack.DefinePlugin({
-                'process.env.TIMING': JSON.stringify(""),
-            })
+                "process.env.TIMING": JSON.stringify(""),
+            }),
         ],
         resolve: {
             alias: {
                 esquery: path.resolve(
                     __dirname,
-                    "../../node_modules/esquery/dist/esquery.min.js",
+                    "../../node_modules/esquery/dist/esquery.min.js"
                 ),
                 "@eslint/eslintrc/universal": path.resolve(
                     __dirname,
-                    "../../node_modules/@eslint/eslintrc/dist/eslintrc-universal.cjs",
+                    "../../node_modules/@eslint/eslintrc/dist/eslintrc-universal.cjs"
                 ),
             },
         },
@@ -73,7 +73,7 @@ module.exports = {
                     options: {
                         search: "[\\s\\S]+", // whole file.
                         replace:
-                            `module.exports = () => [require("eslint/lib/linter").Linter]`,
+                            'module.exports = () => [require("eslint/lib/linter").Linter]',
                         flags: "g",
                     },
                 },
