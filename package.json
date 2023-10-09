@@ -20,7 +20,7 @@
     "@babel/core": "^7.22.9",
     "@babel/eslint-parser": "^7.22.9",
     "@eslint-community/eslint-plugin-mysticatea": "^15.5.1",
-    "@types/node": "^14.18.54",
+    "@types/node": "^20.8.4",
     "@vuepress/plugin-pwa": "^1.9.9",
     "cross-spawn": "^7.0.3",
     "esbuild": "^0.19.3",
