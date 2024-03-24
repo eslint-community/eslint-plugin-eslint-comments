@@ -32,7 +32,47 @@ npm install --save-dev eslint @eslint-community/eslint-plugin-eslint-comments
 
 ## 📖 Usage
 
-Configure your `.eslintrc.*` file.
+Configure your [`eslint.config.*` file](https://eslint.org/docs/latest/use/configure/configuration-files-new).
+
+For example:
+
+```js
+import js from "@eslint/js"
+import comments from "@eslint-community/eslint-plugin-eslint-comments/configs"
+
+export default [
+    js.configs.recommended,
+    comments.recommended,
+]
+```
+
+If your project's ESLint config runs in CommonJS instead of ESM, use `require()`:
+
+```js
+const comments = require("@eslint-community/eslint-plugin-eslint-comments/configs")
+```
+
+Either way, you can optionally configure individual rules:
+
+```js
+// ...
+[
+    // ...
+    comments.recommended,
+    {
+        "@eslint-community/eslint-comments/no-unused-disable": "error"
+    },
+]
+```
+
+::: tip
+The [`@eslint-community/eslint-comments/no-unused-disable`](./rules/no-unused-disable.html) rule has the same effect as [--report-unused-disable-directives](https://eslint.org/docs/user-guide/command-line-interface#--report-unused-disable-directives) option.
+However, the `@eslint-community/eslint-comments/no-unused-disable` rule is relatively useful since it can be configured in shareable configs.
+:::
+
+### 📜 Legacy ESLint Configs
+
+Configure your [`.eslintrc.*` file](https://eslint.org/docs/latest/use/configure/configuration-files).
 
 For example:
 
@@ -48,8 +88,3 @@ For example:
     }
 }
 ```
-
-::: tip
-The [`@eslint-community/eslint-comments/no-unused-disable`](./rules/no-unused-disable.html) rule has the same effect as [--report-unused-disable-directives](https://eslint.org/docs/user-guide/command-line-interface#--report-unused-disable-directives) option.
-However, the `@eslint-community/eslint-comments/no-unused-disable` rule is relatively useful since it can be configured in shareable configs.
-:::
