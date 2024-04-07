@@ -7,11 +7,27 @@
 const semver = require("semver")
 const { Linter, RuleTester } = require("eslint")
 const rule = require("../../../lib/rules/no-restricted-disable")
-const coreRules = new Linter().getRules()
-const tester = new RuleTester()
+const coreRules = new Linter({ configType: "eslintrc" }).getRules()
+let tester = null
 
-tester.defineRule("foo/no-undef", coreRules.get("no-undef"))
-tester.defineRule("foo/no-redeclare", coreRules.get("no-redeclare"))
+if (typeof RuleTester.prototype.defineRule === "function") {
+    // ESLint < 9
+    tester = new RuleTester()
+    tester.defineRule("foo/no-undef", coreRules.get("no-undef"))
+    tester.defineRule("foo/no-redeclare", coreRules.get("no-redeclare"))
+} else {
+    // ESLint 9
+    tester = new RuleTester({
+        plugins: {
+            foo: {
+                rules: {
+                    "no-undef": coreRules.get("no-undef"),
+                    "no-redeclare": coreRules.get("no-redeclare"),
+                },
+            },
+        },
+    })
+}
 
 tester.run("no-restricted-disable", rule, {
     valid: [
