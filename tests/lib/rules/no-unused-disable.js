@@ -47,7 +47,11 @@ function runESLint(code, reportUnusedDisableDirectives = false) {
                     ? ["--report-unused-disable-directives"]
                     : []),
             ],
-            { stdio: ["pipe", "pipe", "inherit"] }
+            {
+                stdio: ["pipe", "pipe", "inherit"],
+                // eslint-disable-next-line no-process-env, @eslint-community/mysticatea/node/no-process-env
+                env: { ...process.env, ESLINT_USE_FLAT_CONFIG: "false" },
+            }
         )
         const chunks = []
         let totalLength = 0

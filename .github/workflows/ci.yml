@@ -54,6 +54,10 @@ jobs:
           - os: macos-latest
             eslint: 8
             node: 18
+          # On ESLint 9
+          - eslint: 9
+            node: 18
+            os: ubuntu-latest
           # On old ESLint versions
           - eslint: 7
             node: 18
