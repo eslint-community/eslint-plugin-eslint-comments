@@ -35,7 +35,7 @@
     "monaco-editor": "^0.47.0",
     "nyc": "^15.1.0",
     "opener": "^1.5.2",
-    "rimraf": "^3.0.2",
+    "rimraf": "^5.0.6",
     "semver": "^7.5.4",
     "vite-plugin-eslint4b": "^0.2.1",
     "vitepress": "^1.0.0-rc.15"
