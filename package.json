@@ -29,7 +29,7 @@
     "@vuepress/plugin-pwa": "^1.9.9",
     "cross-spawn": "^7.0.3",
     "esbuild": "^0.19.3",
-    "eslint": "^8.46.0",
+    "eslint": "^9.3.0",
     "fs-extra": "^10.1.0",
     "mocha": "^10.4.0",
     "monaco-editor": "^0.47.0",
