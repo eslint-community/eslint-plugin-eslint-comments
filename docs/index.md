@@ -60,7 +60,9 @@ Either way, you can optionally configure individual rules:
     // ...
     comments.recommended,
     {
-        "@eslint-community/eslint-comments/no-unused-disable": "error"
+        rules: {
+            "@eslint-community/eslint-comments/no-unused-disable": "error"
+        }
     },
 ]
 ```
