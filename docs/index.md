@@ -60,14 +60,19 @@ Either way, you can optionally configure individual rules:
     // ...
     comments.recommended,
     {
-        "@eslint-community/eslint-comments/no-unused-disable": "error"
+        rules: {
+            "@eslint-community/eslint-comments/require-description": "warn",
+        },
+        linterOptions:
+            reportUnusedDisableDirectives: "error",
+        },
     },
 ]
 ```
 
 ::: tip
-The [`@eslint-community/eslint-comments/no-unused-disable`](./rules/no-unused-disable.html) rule has the same effect as [--report-unused-disable-directives](https://eslint.org/docs/user-guide/command-line-interface#--report-unused-disable-directives) option.
-However, the `@eslint-community/eslint-comments/no-unused-disable` rule is relatively useful since it can be configured in shareable configs.
+For legacy configs, the [`@eslint-community/eslint-comments/no-unused-disable`](./rules/no-unused-disable.html) rule has the same effect as [--report-unused-disable-directives](https://eslint.org/docs/user-guide/command-line-interface#--report-unused-disable-directives) option.
+However, the `@eslint-community/eslint-comments/no-unused-disable` rule is relatively useful since it can be configured in shareable configs. For flat configs the rule has no effect, use `linterOptions.reportUnusedDisableDirectives` instead.
 :::
 
 ### 📜 Legacy ESLint Configs
@@ -84,6 +89,7 @@ For example:
     ],
     "rules": {
         // Optional.
+        "@eslint-community/eslint-comments/require-description": "warn",
         "@eslint-community/eslint-comments/no-unused-disable": "error"
     }
 }
