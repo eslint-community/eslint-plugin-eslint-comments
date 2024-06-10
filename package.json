@@ -37,7 +37,7 @@
     "opener": "^1.5.2",
     "rimraf": "^3.0.2",
     "semver": "^7.5.4",
-    "vite-plugin-eslint4b": "^0.2.1",
+    "vite-plugin-eslint4b": "^0.4.2",
     "vitepress": "^1.0.0-rc.15"
   },
   "scripts": {
