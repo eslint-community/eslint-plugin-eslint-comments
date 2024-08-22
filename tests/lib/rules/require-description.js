@@ -74,6 +74,10 @@ tester.run("require-description", rule, {
             code: "/* globals */",
             options: [{ ignore: ["globals"] }],
         },
+        {
+            code: "/* eslint-disable no-undef */",
+            options: [{ disableForRules: ["no-undef"] }],
+        },
     ],
     invalid: [
         {
