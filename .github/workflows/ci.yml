@@ -97,6 +97,24 @@ jobs:
       - name: ⬆️ Upload coverage report
         uses: codecov/codecov-action@v4
 
+  are-the-types-wrong:
+    name: 🤔 Are the types wrong?
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: 📥 Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: ▶️ Run test:types script
+        run: npm run test:types -- --format=table
+
   release:
     name: 🚀 Release
     needs: [ lint, test ]
