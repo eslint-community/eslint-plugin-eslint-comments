@@ -66,6 +66,14 @@ You can specify ignored directive-comments.
     - `"global"`
     - `"globals"`
 
+You can specify rules that don't require directive-comments.
+
+```json
+{
+    "@eslint-community/eslint-comments/require-description": ["error", {"disableForRules": []}]
+}
+```
+
 ## Further Reading
 
 - [ESLint RFCs - Description in directive comments]
