@@ -1,8 +1,11 @@
-/** DON'T EDIT THIS FILE WHICH WAS CREATED BY 'scripts/generate-index.js'. */
 "use strict"
 
+const rules = require("./lib/rules")
+const utils = require("./lib/utils")
+const configs = require("./lib/configs")
+
 module.exports = {
-    configs: require("./lib/configs"),
-    rules: require("./lib/rules"),
-    utils: require("./lib/utils"),
+    configs,
+    rules,
+    utils,
 }
