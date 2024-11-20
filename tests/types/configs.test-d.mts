@@ -4,12 +4,12 @@ import { expectTypeOf } from "expect-type"
 
 expectTypeOf(configs)
   .toHaveProperty("recommended")
-  .toMatchTypeOf<Linter.FlatConfig>()
+  .toExtend<Linter.FlatConfig>()
 
-expectTypeOf([configs.recommended]).toMatchTypeOf<Linter.FlatConfig[]>()
+expectTypeOf([configs.recommended]).toExtend<Linter.FlatConfig[]>()
 
-expectTypeOf(configs.recommended).toMatchTypeOf<Linter.FlatConfig>()
+expectTypeOf(configs.recommended).toExtend<Linter.FlatConfig>()
 
 expectTypeOf(configs)
   .toHaveProperty("recommended")
-  .toMatchTypeOf<Linter.FlatConfig>()
+  .toExtend<Linter.FlatConfig>()
