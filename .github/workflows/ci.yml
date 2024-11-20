@@ -43,8 +43,7 @@ jobs:
         run: npm run lint
 
   test:
-    name:
-      🧪 Test (Node@${{ matrix.node }} - ESLint@${{ matrix.eslint }} - ${{
+    name: 🧪 Test (Node@${{ matrix.node }} - ESLint@${{ matrix.eslint }} - ${{
       matrix.os }})
     strategy:
       fail-fast: false
@@ -118,12 +117,54 @@ jobs:
       - name: ▶️ Run test:types script
         run: npm run test:types
 
+  type-tests:
+    name: 🧪 Type tests with ESLint ${{ matrix.eslint }} and TypeScript ${{ matrix.ts }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        eslint: [8, 9]
+        ts: ["5.0", "5.1", "5.2", "5.3", "5.4", "5.5", "5.6", "5.7", "5.8"]
+
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: 📥 Install dependencies
+        run: npm install
+
+      - name: Pack the package
+        id: pack
+        run: npm install "$(npm pack | tail -n1)"
+
+      - name: 📥 Uninstall @types/eslint
+        if: matrix.eslint != 8
+        run: npm uninstall @types/eslint
+
+      - name: 📥 Install ESLint version ${{ matrix.eslint }}
+        run: npm install --save-dev eslint@${{ matrix.eslint }}
+
+      - name: 📥 Install TypeScript version ${{ matrix.ts }}
+        run: npm install --save-dev typescript@${{ matrix.ts }} -f
+
+      - name: ▶️ Run test:types script
+        run: npm run test:types
+
+      - name: 📝 List version of ESLint
+        run: npm why eslint @types/eslint
+
   release:
     name: 🚀 Release
-    needs: [ lint, test ]
+    needs: [lint, test]
     runs-on: ubuntu-latest
-    if:
-      github.repository == 'eslint-community/eslint-plugin-eslint-comments' &&
+    if: github.repository == 'eslint-community/eslint-plugin-eslint-comments' &&
       contains('refs/heads/main,refs/heads/next,refs/heads/beta,refs/heads/alpha',
       github.ref) && github.event_name == 'push'
     steps:
