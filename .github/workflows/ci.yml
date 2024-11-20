@@ -112,8 +112,11 @@ jobs:
       - name: 📥 Install dependencies
         run: npm install --legacy-peer-deps
 
+      - name: ▶️ Run check-exports script
+        run: npm run check-exports -- --format=table
+
       - name: ▶️ Run test:types script
-        run: npm run test:types -- --format=table
+        run: npm run test:types
 
   release:
     name: 🚀 Release
