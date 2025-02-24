@@ -50,7 +50,7 @@ jobs:
       fail-fast: false
       matrix:
         eslint: [8]
-        node: [12.22.0, 12, 14.17.0, 14, 16.0.0, 16, 18.0.0, 18, 20]
+        node: [12.22.0, 12, 14.17.0, 14, 16.0.0, 16, 18.0.0, 18, 20, 22]
         os: [ubuntu-latest]
         include:
           # On other platforms
