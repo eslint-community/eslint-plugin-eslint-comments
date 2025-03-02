@@ -39,6 +39,9 @@ jobs:
             - name: 📥 Install dependencies
               run: npm install
 
+            - name: 📥 Build
+              run: npm run build
+
             - name: ▶️ Run lint script
               run: npm run lint
 
@@ -50,7 +53,7 @@ jobs:
             fail-fast: false
             matrix:
                 eslint: [9]
-                node: [18, 20, 22, 24]
+                node: [20, 22, 24]
                 os: [ubuntu-latest]
                 include:
                     # On other platforms
@@ -60,41 +63,8 @@ jobs:
                     - os: macos-latest
                       eslint: 9
                       node: 24
-                    # On old Node versions & ESLint v8
-                    - eslint: 8
-                      node: 18.0.0
-                      os: ubuntu-latest
-                    - eslint: 8
-                      node: 16
-                      os: ubuntu-latest
-                    - eslint: 8
-                      node: 16.0.0
-                      os: ubuntu-latest
-                    - eslint: 8
-                      node: 14
-                      os: ubuntu-latest
-                    - eslint: 8
-                      node: 14.17.0
-                      os: ubuntu-latest
-                    - eslint: 8
-                      node: 12
-                      os: ubuntu-latest
-                    - eslint: 8
-                      node: 12.22.0
-                      os: ubuntu-latest
-                    # On old ESLint versions
-                    - eslint: 8
+                    - eslint: 8.57.0
                       node: 24
-                      os: ubuntu-latest
-                    - eslint: 7
-                      node: 24
-                      os: ubuntu-latest
-                    - eslint: 6
-                      node: 24
-                      os: ubuntu-latest
-                    # On the minimum supported ESLint/Node.js version
-                    - eslint: 6.0.0
-                      node: 12.22.0
                       os: ubuntu-latest
         runs-on: ${{ matrix.os }}
         steps:
@@ -105,12 +75,20 @@ jobs:
               uses: actions/setup-node@v6
               with:
                   node-version: ${{ matrix.node }}
+                  check-latest: true
 
             - name: 📥 Install dependencies
               run: npm install --legacy-peer-deps
 
+            - name: 📥 Build
+              run: npm run build
+
             - name: 📥 Install ESLint v${{ matrix.eslint }}
               run: npm install --save-dev eslint@${{ matrix.eslint }}
+
+            - name: 📥 Install @types/eslint
+              if: startsWith(matrix.eslint, '8')
+              run: npm install --save-dev @types/eslint -f
 
             - name: ▶️ Run test script
               run: npm run test
@@ -136,8 +114,8 @@ jobs:
             - name: ▶️ Run check-exports script
               run: npm run check-exports -- --format=table
 
-            - name: ▶️ Run test:types script
-              run: npm run test:types
+            - name: ▶️ Run typecheck script
+              run: npm run typecheck
 
     type-tests:
         name: 🧪 Type tests with ESLint ${{ matrix.eslint }} and TypeScript ${{ matrix.ts }}
@@ -147,8 +125,8 @@ jobs:
             fail-fast: false
 
             matrix:
-                eslint: [8, 9]
-                ts: ["5.0", "5.9"]
+                eslint: [9]
+                ts: ["5.7", "5.8", "5.9"]
 
         steps:
             - name: ⬇️ Checkout repo
@@ -166,21 +144,18 @@ jobs:
               id: pack
               run: npm install "$(npm pack | tail -n1)"
 
-            - name: 📥 Uninstall @types/eslint
-              if: matrix.eslint != 8
-              run: npm uninstall @types/eslint
-
             - name: 📥 Install ESLint version ${{ matrix.eslint }}
               run: npm install --save-dev eslint@${{ matrix.eslint }}
+
+            - name: 📥 Install @types/eslint
+              if: startsWith(matrix.eslint, '8')
+              run: npm install --save-dev @types/eslint@^8 -f
 
             - name: 📥 Install TypeScript version ${{ matrix.ts }}
               run: npm install --save-dev typescript@${{ matrix.ts }} -f
 
-            - name: ▶️ Run test:types script
-              run: npm run test:types
-
-            - name: 📝 List version of ESLint
-              run: npm why eslint @types/eslint
+            - name: ▶️ Run typecheck script
+              run: npm run typecheck
 
     release:
         name: 🚀 Release

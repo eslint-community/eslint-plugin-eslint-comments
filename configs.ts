@@ -1,24 +1,20 @@
-"use strict"
-
-const { rules: rulesRecommended } = require("./lib/configs/recommended")
-const rules = require("./lib/rules")
-const { name, version } = require("./package.json")
+import type { ESLint, Linter } from "eslint"
+import { rulesRecommended } from "./lib/configs/recommended.ts"
+import { rules } from "./lib/rules.ts"
+import packageJson from "./package.json" with { type: "json" }
 
 const plugin = {
-    meta: { name, version },
+    meta: {
+        name: packageJson.name,
+        version: packageJson.version,
+    },
     rules,
-}
+} satisfies ESLint.Plugin
 
-const recommended = {
+export const recommended = {
     name: "@eslint-community/eslint-comments/recommended",
     plugins: {
         "@eslint-community/eslint-comments": plugin,
     },
     rules: rulesRecommended,
-}
-
-module.exports = {
-    recommended,
-}
-
-module.exports.default = module.exports
+} satisfies Linter.Config

@@ -2,11 +2,11 @@
  * @author Toru Nagashima <https://github.com/mysticatea>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
+import cssPlugin from "@eslint/css"
+import { Linter, RuleTester } from "eslint"
+import semver from "semver"
+import rule from "../../../lib/rules/no-use.ts"
 
-const semver = require("semver")
-const { Linter, RuleTester } = require("eslint")
-const rule = require("../../../lib/rules/no-use")
 const tester = new RuleTester()
 
 tester.run("no-use", rule, {
@@ -70,10 +70,10 @@ tester.run("no-use", rule, {
                       code: "/* eslint-disable */ a {}",
                       options: [{ allow: ["eslint-disable"] }],
                       plugins: {
-                          css: require("@eslint/css").default,
+                          css: cssPlugin,
                       },
                       language: "css/css",
-                  },
+                  } as any,
               ]
             : []),
     ],
@@ -128,11 +128,11 @@ tester.run("no-use", rule, {
                   {
                       code: "/* eslint-disable */ a {}",
                       plugins: {
-                          css: require("@eslint/css").default,
+                          css: cssPlugin,
                       },
                       language: "css/css",
                       errors: ["Unexpected ESLint directive comment."],
-                  },
+                  } as any,
               ]
             : []),
     ],

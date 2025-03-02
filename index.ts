@@ -1,11 +1,3 @@
-"use strict"
-
-const rules = require("./lib/rules")
-const utils = require("./lib/utils")
-const configs = require("./lib/configs")
-
-module.exports = {
-    configs,
-    rules,
-    utils,
-}
+export * as configs from "./lib/configs.ts"
+export { rules } from "./lib/rules.ts"
+export * as utils from "./lib/utils.ts"

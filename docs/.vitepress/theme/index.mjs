@@ -9,7 +9,6 @@ const theme = {
         ctx.app.component(
             "eslint-playground",
             defineAsyncComponent({
-                // @ts-expect-error -- ignore
                 loader: () => import("./components/eslint-playground.vue"),
             })
         )

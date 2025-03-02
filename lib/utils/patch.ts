@@ -2,10 +2,10 @@
  * @author Toru Nagashima <https://github.com/mysticatea>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
-
-const getLinters = require("../internal/get-linters")
-const { toRuleIdLocation } = require("../internal/utils")
+import type { Linter, SourceCode } from "eslint"
+import getLinters from "../internal/get-linters.ts"
+import type { Comment, VerifyWithoutProcessors } from "../internal/types.ts"
+import { toRuleIdLocation } from "../internal/utils.ts"
 const quotedName = /'(.+?)'/u
 
 /**
@@ -14,7 +14,7 @@ const quotedName = /'(.+?)'/u
  * @param {string} ruleId The rule ID to check.
  * @returns {number} The severity of the rule.
  */
-function getSeverity(config, ruleId) {
+function getSeverity(config: Linter.Config, ruleId: string): Linter.Severity {
     const rules = config && config.rules
     const ruleOptions = rules && rules[ruleId]
     const severity = Array.isArray(ruleOptions) ? ruleOptions[0] : ruleOptions
@@ -39,7 +39,10 @@ function getSeverity(config, ruleId) {
  * @param {SourceCode|undefined} sourceCode The source code object to get.
  * @returns {Comment|undefined} The gotten comment.
  */
-function getCommentAt(message, sourceCode) {
+function getCommentAt(
+    message: Linter.LintMessage,
+    sourceCode: SourceCode | undefined
+): Comment | undefined {
     if (sourceCode != null) {
         const loc = { line: message.line, column: message.column - 1 }
         const index = sourceCode.getIndexFromLoc(loc)
@@ -60,7 +63,7 @@ function getCommentAt(message, sourceCode) {
  * @param {Message} message The message.
  * @returns {boolean} `true` if the message is a `reportUnusedDisableDirectives` error.
  */
-function isUnusedDisableDirectiveError(message) {
+function isUnusedDisableDirectiveError(message: Linter.LintMessage): boolean {
     return (
         !message.fatal &&
         !message.ruleId &&
@@ -76,7 +79,12 @@ function isUnusedDisableDirectiveError(message) {
  * @param {Comment|undefined} comment The directive comment.
  * @returns {Message} The created error.
  */
-function createNoUnusedDisableError(ruleId, severity, message, comment) {
+function createNoUnusedDisableError(
+    ruleId: string,
+    severity: Linter.LintMessage["severity"],
+    message: Linter.LintMessage,
+    comment: Comment | undefined
+): Linter.LintMessage {
     const clone = Object.assign({}, message)
     const match = quotedName.exec(message.message)
     const targetRuleId = match && match[1]
@@ -90,14 +98,14 @@ function createNoUnusedDisableError(ruleId, severity, message, comment) {
 
     if (comment != null) {
         if (targetRuleId) {
-            const loc = toRuleIdLocation({}, comment, targetRuleId)
-            clone.line = loc.start.line
-            clone.column = loc.start.column + 1
-            clone.endLine = loc.end.line
-            clone.endColumn = loc.end.column + 1
+            const loc = toRuleIdLocation({}, comment as any, targetRuleId)
+            clone.line = loc?.start.line!
+            clone.column = loc?.start.column! + 1
+            clone.endLine = loc?.end.line
+            clone.endColumn = loc?.end.column! + 1
         } else {
-            clone.endLine = comment.loc.end.line
-            clone.endColumn = comment.loc.end.column + 1
+            clone.endLine = comment.loc?.end.line
+            clone.endColumn = comment.loc?.end.column! + 1
         }
         // Remove the whole node if it is the only rule, otherwise
         // don't try to fix because it is quite complicated.
@@ -108,7 +116,7 @@ function createNoUnusedDisableError(ruleId, severity, message, comment) {
                 {
                     desc: "Remove `eslint-disable` comment.",
                     fix: {
-                        range: comment.range,
+                        range: comment.range!,
                         text: comment.value.includes("\n") ? "\n" : "",
                     },
                 },
@@ -128,7 +136,13 @@ function createNoUnusedDisableError(ruleId, severity, message, comment) {
  * @param {boolean} keepAsIs The flag to keep original errors as is.
  * @returns {Message[]} The converted messages.
  */
-function convert(messages, sourceCode, ruleId, severity, keepAsIs) {
+function convert(
+    messages: Linter.LintMessage[],
+    sourceCode: SourceCode | undefined,
+    ruleId: string,
+    severity: Linter.LintMessage["severity"],
+    keepAsIs: boolean
+): Linter.LintMessage[] {
     for (let i = messages.length - 1; i >= 0; --i) {
         const message = messages[i]
         if (!isUnusedDisableDirectiveError(message)) {
@@ -152,17 +166,20 @@ function convert(messages, sourceCode, ruleId, severity, keepAsIs) {
     return messages
 }
 
-module.exports = (
+const patch = (
     ruleId = "@eslint-community/eslint-comments/no-unused-disable"
-) => {
+): void => {
     for (const Linter of getLinters()) {
-        const verify0 = Linter.prototype._verifyWithoutProcessors
+        const verify0: VerifyWithoutProcessors =
+            // @ts-expect-error
+            Linter.prototype._verifyWithoutProcessors
         Object.defineProperty(Linter.prototype, "_verifyWithoutProcessors", {
             value: function _verifyWithoutProcessors(
-                textOrSourceCode,
-                config,
-                filenameOrOptions
-            ) {
+                this: Linter,
+                textOrSourceCode: SourceCode | string,
+                config: Linter.Config,
+                filenameOrOptions?: string | Linter.LintOptions
+            ): (Linter.LintMessage | Linter.SuppressedLintMessage)[] {
                 const severity = getSeverity(config, ruleId)
                 if (severity === 0) {
                     return verify0.call(
@@ -201,3 +218,5 @@ module.exports = (
         })
     }
 }
+
+export default patch

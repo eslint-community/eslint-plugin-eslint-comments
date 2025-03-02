@@ -2,11 +2,11 @@
  * @author Toru Nagashima <https://github.com/mysticatea>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
+import cssPlugin from "@eslint/css"
+import { Linter, RuleTester } from "eslint"
+import * as semver from "semver"
+import rule from "../../../lib/rules/no-duplicate-disable.ts"
 
-const semver = require("semver")
-const { Linter, RuleTester } = require("eslint")
-const rule = require("../../../lib/rules/no-duplicate-disable")
 const tester = new RuleTester()
 
 tester.run("no-duplicate-disable", rule, {
@@ -40,10 +40,10 @@ tester.run("no-duplicate-disable", rule, {
 /*eslint-disable eqeqeq*/
 a {}`,
                       plugins: {
-                          css: require("@eslint/css").default,
+                          css: cssPlugin,
                       },
                       language: "css/css",
-                  },
+                  } as any,
               ]
             : []),
     ],
@@ -139,26 +139,21 @@ a {}`,
             ],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  {
-                      code: `
+        {
+            code: `
 // eslint-disable-next-line no-undef -- description
 // eslint-disable-line no-undef -- description
 `,
-                      errors: [
-                          {
-                              message:
-                                  "'no-undef' rule has been disabled already.",
-                              line: 3,
-                              column: 24,
-                              endLine: 3,
-                              endColumn: 32,
-                          },
-                      ],
-                  },
-              ]
-            : []),
+            errors: [
+                {
+                    message: "'no-undef' rule has been disabled already.",
+                    line: 3,
+                    column: 24,
+                    endLine: 3,
+                    endColumn: 32,
+                },
+            ],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
@@ -168,7 +163,7 @@ a {}`,
 /* eslint-disable-line no-undef */
 a {}`,
                       plugins: {
-                          css: require("@eslint/css").default,
+                          css: cssPlugin,
                       },
                       language: "css/css",
                       errors: [
@@ -181,7 +176,7 @@ a {}`,
                               endColumn: 32,
                           },
                       ],
-                  },
+                  } as any,
               ]
             : []),
     ],

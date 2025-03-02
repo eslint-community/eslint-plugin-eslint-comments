@@ -2,12 +2,11 @@
  * @author Toru Nagashima <https://github.com/mysticatea>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
+import type { Rule } from "eslint"
+import { getDisabledArea } from "../internal/disabled-area.ts"
+import * as utils from "../internal/utils.ts"
 
-const { getDisabledArea } = require("../internal/disabled-area")
-const utils = require("../internal/utils")
-
-module.exports = {
+const noDuplicateDisable: Rule.RuleModule = {
     meta: {
         docs: {
             description: "disallow duplicate `eslint-disable` comments",
@@ -15,7 +14,7 @@ module.exports = {
             recommended: true,
             url: "https://eslint-community.github.io/eslint-plugin-eslint-comments/rules/no-duplicate-disable.html",
         },
-        fixable: null,
+        fixable: null as any,
         messages: {
             duplicate: "ESLint rules have been disabled already.",
             duplicateRule: "'{{ruleId}}' rule has been disabled already.",
@@ -25,15 +24,21 @@ module.exports = {
     },
 
     create(context) {
-        const disabledArea = getDisabledArea(context)
+        const disabledArea = getDisabledArea(context as never)
 
         for (const item of disabledArea.duplicateDisableDirectives) {
             context.report({
-                loc: utils.toRuleIdLocation(context, item.comment, item.ruleId),
+                loc: utils.toRuleIdLocation(
+                    context,
+                    item.comment,
+                    item.ruleId
+                )!,
                 messageId: item.ruleId ? "duplicateRule" : "duplicate",
-                data: item,
+                data: item as never,
             })
         }
         return {}
     },
 }
+
+export default noDuplicateDisable

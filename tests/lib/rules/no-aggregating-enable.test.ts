@@ -2,11 +2,11 @@
  * @author Toru Nagashima <https://github.com/mysticatea>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
+import cssPlugin from "@eslint/css"
+import { Linter, RuleTester } from "eslint"
+import * as semver from "semver"
+import rule from "../../../lib/rules/no-aggregating-enable.ts"
 
-const semver = require("semver")
-const { Linter, RuleTester } = require("eslint")
-const rule = require("../../../lib/rules/no-aggregating-enable")
 const tester = new RuleTester()
 
 tester.run("no-aggregating-enable", rule, {
@@ -42,10 +42,10 @@ tester.run("no-aggregating-enable", rule, {
             /*eslint-enable no-shadow*/
             a {}`,
                       plugins: {
-                          css: require("@eslint/css").default,
+                          css: cssPlugin,
                       },
                       language: "css/css",
-                  },
+                  } as any,
               ]
             : []),
     ],
@@ -82,20 +82,16 @@ tester.run("no-aggregating-enable", rule, {
             ],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  {
-                      code: `
+        {
+            code: `
                 /*eslint-disable no-redeclare*/
                 /*eslint-disable no-shadow*/
                 /*eslint-enable -- description*/
             `,
-                      errors: [
-                          "This `eslint-enable` comment affects 2 `eslint-disable` comments. An `eslint-enable` comment should be for an `eslint-disable` comment.",
-                      ],
-                  },
-              ]
-            : []),
+            errors: [
+                "This `eslint-enable` comment affects 2 `eslint-disable` comments. An `eslint-enable` comment should be for an `eslint-disable` comment.",
+            ],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
@@ -106,13 +102,13 @@ tester.run("no-aggregating-enable", rule, {
                 /*eslint-enable*/
             a {}`,
                       plugins: {
-                          css: require("@eslint/css").default,
+                          css: cssPlugin,
                       },
                       language: "css/css",
                       errors: [
                           "This `eslint-enable` comment affects 2 `eslint-disable` comments. An `eslint-enable` comment should be for an `eslint-disable` comment.",
                       ],
-                  },
+                  } as any,
               ]
             : []),
     ],

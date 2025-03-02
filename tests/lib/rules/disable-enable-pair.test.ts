@@ -2,11 +2,11 @@
  * @author Toru Nagashima <https://github.com/mysticatea>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
+import cssPlugin from "@eslint/css"
+import { Linter, RuleTester } from "eslint"
+import * as semver from "semver"
+import rule from "../../../lib/rules/disable-enable-pair.ts"
 
-const semver = require("semver")
-const { Linter, RuleTester } = require("eslint")
-const rule = require("../../../lib/rules/disable-enable-pair")
 const tester = new RuleTester()
 
 tester.run("disable-enable-pair", rule, {
@@ -80,18 +80,14 @@ var foo = 1
             options: [{ allowWholeFile: true }],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  `
+        `
 /*eslint-disable no-undef -- description*/
 /*eslint-enable no-undef*/
 `,
-                  `
+        `
 /*eslint-disable no-undef,no-unused-vars -- description*/
 /*eslint-enable no-undef,no-unused-vars*/
 `,
-              ]
-            : []),
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
@@ -102,10 +98,10 @@ var foo = 1
 a {}
 `,
                       plugins: {
-                          css: require("@eslint/css").default,
+                          css: cssPlugin,
                       },
                       language: "css/css",
-                  },
+                  } as any,
               ]
             : []),
     ],
@@ -226,35 +222,31 @@ console.log();
             ],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  {
-                      code: `
+        {
+            code: `
 {
 /*eslint-disable no-unused-vars -- description */
 }
 `,
-                      options: [{ allowWholeFile: true }],
-                      errors: [
-                          {
-                              message:
-                                  "Requires 'eslint-enable' directive for 'no-unused-vars'.",
-                              line: 3,
-                              column: 18,
-                              endLine: 3,
-                              endColumn: 32,
-                          },
-                      ],
-                  },
-              ]
-            : []),
+            options: [{ allowWholeFile: true }],
+            errors: [
+                {
+                    message:
+                        "Requires 'eslint-enable' directive for 'no-unused-vars'.",
+                    line: 3,
+                    column: 18,
+                    endLine: 3,
+                    endColumn: 32,
+                },
+            ],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
                   {
                       code: "/* eslint-disable no-unused-vars */ a {}",
                       plugins: {
-                          css: require("@eslint/css").default,
+                          css: cssPlugin,
                       },
                       language: "css/css",
                       errors: [
@@ -267,7 +259,7 @@ console.log();
                               endColumn: 33,
                           },
                       ],
-                  },
+                  } as any,
               ]
             : []),
     ],

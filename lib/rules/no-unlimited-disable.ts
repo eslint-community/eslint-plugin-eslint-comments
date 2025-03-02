@@ -2,14 +2,11 @@
  * @author Toru Nagashima <https://github.com/mysticatea>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
+import type { Rule } from "eslint"
+import { getAllDirectiveComments } from "../internal/get-all-directive-comments.ts"
+import * as utils from "../internal/utils.ts"
 
-const {
-    getAllDirectiveComments,
-} = require("../internal/get-all-directive-comments")
-const utils = require("../internal/utils")
-
-module.exports = {
+const noUnlimitedDisable: Rule.RuleModule = {
     meta: {
         docs: {
             description:
@@ -18,7 +15,7 @@ module.exports = {
             recommended: true,
             url: "https://eslint-community.github.io/eslint-plugin-eslint-comments/rules/no-unlimited-disable.html",
         },
-        fixable: null,
+        fixable: null as any,
         messages: {
             unexpected:
                 "Unexpected unlimited '{{kind}}' comment. Specify some rule names to disable.",
@@ -28,8 +25,10 @@ module.exports = {
     },
 
     create(context) {
-        for (const directiveComment of getAllDirectiveComments(context)) {
-            const kind = directiveComment.kind
+        for (const directiveComment of getAllDirectiveComments(
+            context as never
+        )) {
+            const { kind } = directiveComment
             if (
                 kind !== "eslint-disable" &&
                 kind !== "eslint-disable-line" &&
@@ -45,6 +44,9 @@ module.exports = {
                 })
             }
         }
+
         return {}
     },
 }
+
+export default noUnlimitedDisable

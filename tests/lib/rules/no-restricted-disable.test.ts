@@ -2,18 +2,21 @@
  * @author Toru Nagashima <https://github.com/mysticatea>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
+import cssPlugin from "@eslint/css"
+import { Linter, RuleTester } from "eslint"
+import * as semver from "semver"
+import rule from "../../../lib/rules/no-restricted-disable.ts"
 
-const semver = require("semver")
-const { Linter, RuleTester } = require("eslint")
-const rule = require("../../../lib/rules/no-restricted-disable")
 const coreRules = new Linter({ configType: "eslintrc" }).getRules()
 let tester = null
 
+// @ts-expect-error
 if (typeof RuleTester.prototype.defineRule === "function") {
     // ESLint < 9
     tester = new RuleTester()
+    // @ts-expect-error
     tester.defineRule("foo/no-undef", coreRules.get("no-undef"))
+    // @ts-expect-error
     tester.defineRule("foo/no-redeclare", coreRules.get("no-redeclare"))
 } else {
     // ESLint 9
@@ -21,8 +24,8 @@ if (typeof RuleTester.prototype.defineRule === "function") {
         plugins: {
             foo: {
                 rules: {
-                    "no-undef": coreRules.get("no-undef"),
-                    "no-redeclare": coreRules.get("no-redeclare"),
+                    "no-undef": coreRules.get("no-undef")!,
+                    "no-redeclare": coreRules.get("no-redeclare")!,
                 },
             },
         },
@@ -55,10 +58,10 @@ tester.run("no-restricted-disable", rule, {
                       code: "/*eslint-disable eqeqeq*/ a {}",
                       options: ["*", "!eqeqeq"],
                       plugins: {
-                          css: require("@eslint/css").default,
+                          css: cssPlugin,
                       },
                       language: "css/css",
-                  },
+                  } as any,
               ]
             : []),
     ],
@@ -183,15 +186,11 @@ tester.run("no-restricted-disable", rule, {
             ],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  {
-                      code: "/*eslint-disable -- description*/",
-                      options: ["eqeqeq"],
-                      errors: ["Disabling 'eqeqeq' is not allowed."],
-                  },
-              ]
-            : []),
+        {
+            code: "/*eslint-disable -- description*/",
+            options: ["eqeqeq"],
+            errors: ["Disabling 'eqeqeq' is not allowed."],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
@@ -199,11 +198,11 @@ tester.run("no-restricted-disable", rule, {
                       code: "/*eslint-disable eqeqeq*/ a {}",
                       options: ["eqeqeq"],
                       plugins: {
-                          css: require("@eslint/css").default,
+                          css: cssPlugin,
                       },
                       language: "css/css",
                       errors: ["Disabling 'eqeqeq' is not allowed."],
-                  },
+                  } as any,
               ]
             : []),
     ],

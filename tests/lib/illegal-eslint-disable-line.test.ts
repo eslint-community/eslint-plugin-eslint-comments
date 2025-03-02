@@ -1,20 +1,20 @@
 /**
  * Test that multi-line eslint-disable-line comments are not false positives.
  */
-"use strict"
 
-const assert = require("assert")
-const fs = require("fs")
-const path = require("path")
-const spawn = require("cross-spawn")
-const rimraf = require("rimraf")
+import spawn from "cross-spawn"
+import type { Linter } from "eslint"
+import * as assert from "node:assert"
+import * as fs from "node:fs"
+import * as path from "node:path"
+import { rimraf } from "rimraf"
 
 /**
  * Run eslint CLI command with a given source code.
  * @param {string} code The source code to lint.
  * @returns {Promise<Message[]>} The result message.
  */
-function runESLint(code) {
+function runESLint(code: string): Promise<Linter.LintMessage[]> {
     return new Promise((resolve, reject) => {
         const cp = spawn(
             "eslint",
@@ -30,18 +30,17 @@ function runESLint(code) {
             ],
             {
                 stdio: ["pipe", "pipe", "inherit"],
-                // eslint-disable-next-line no-process-env
                 env: { ...process.env, ESLINT_USE_FLAT_CONFIG: "false" },
             }
         )
-        const chunks = []
+        const chunks: any[] = []
         let totalLength = 0
 
-        cp.stdout.on("data", (chunk) => {
+        cp.stdout?.on("data", (chunk) => {
             chunks.push(chunk)
             totalLength += chunk.length
         })
-        cp.stdout.on("end", () => {
+        cp.stdout?.on("end", () => {
             try {
                 const resultsStr = String(Buffer.concat(chunks, totalLength))
                 const results = JSON.parse(resultsStr)
@@ -52,25 +51,25 @@ function runESLint(code) {
         })
         cp.on("error", reject)
 
-        cp.stdin.end(code)
+        cp.stdin?.end(code)
     })
 }
 
 describe("multi-line eslint-disable-line comments", () => {
-    before(() => {
-        // Register this plugin.
-        const selfPath = path.resolve(__dirname, "../../")
-        const pluginPath = path.resolve(
-            __dirname,
-            "../../node_modules/@eslint-community/eslint-plugin-eslint-comments"
-        )
+    // Register this plugin.
+    const selfPath = path.resolve(import.meta.dirname, "../../")
+    const pluginPath = path.resolve(
+        import.meta.dirname,
+        "../../node_modules/@eslint-community/eslint-plugin-eslint-comments"
+    )
 
+    beforeAll(() => {
         fs.mkdirSync(path.dirname(pluginPath), { recursive: true })
         if (fs.existsSync(pluginPath)) {
             rimraf.sync(pluginPath)
+        } else {
+            fs.symlinkSync(selfPath, pluginPath, "junction")
         }
-
-        fs.symlinkSync(selfPath, pluginPath, "junction")
     })
 
     describe("`@eslint-community/eslint-comments/*` rules are valid", () => {

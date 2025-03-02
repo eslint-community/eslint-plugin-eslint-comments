@@ -1,14 +1,22 @@
-/** DON'T EDIT THIS FILE; was created by scripts. */
-"use strict"
+import type { Rule } from "eslint"
+import disableEnablePair from "./rules/disable-enable-pair.ts"
+import noAggregatingEnable from "./rules/no-aggregating-enable.ts"
+import noDuplicateDisable from "./rules/no-duplicate-disable.ts"
+import noRestrictedDisable from "./rules/no-restricted-disable.ts"
+import noUnlimitedDisable from "./rules/no-unlimited-disable.ts"
+import noUnusedDisable from "./rules/no-unused-disable.ts"
+import noUnusedEnable from "./rules/no-unused-enable.ts"
+import noUse from "./rules/no-use.ts"
+import requireDescription from "./rules/require-description.ts"
 
-module.exports = {
-    "disable-enable-pair": require("./rules/disable-enable-pair"),
-    "no-aggregating-enable": require("./rules/no-aggregating-enable"),
-    "no-duplicate-disable": require("./rules/no-duplicate-disable"),
-    "no-restricted-disable": require("./rules/no-restricted-disable"),
-    "no-unlimited-disable": require("./rules/no-unlimited-disable"),
-    "no-unused-disable": require("./rules/no-unused-disable"),
-    "no-unused-enable": require("./rules/no-unused-enable"),
-    "no-use": require("./rules/no-use"),
-    "require-description": require("./rules/require-description"),
-}
+export const rules = {
+    "disable-enable-pair": disableEnablePair,
+    "no-aggregating-enable": noAggregatingEnable,
+    "no-duplicate-disable": noDuplicateDisable,
+    "no-restricted-disable": noRestrictedDisable,
+    "no-unlimited-disable": noUnlimitedDisable,
+    "no-unused-disable": noUnusedDisable,
+    "no-unused-enable": noUnusedEnable,
+    "no-use": noUse,
+    "require-description": requireDescription,
+} satisfies Record<string, Rule.RuleModule>

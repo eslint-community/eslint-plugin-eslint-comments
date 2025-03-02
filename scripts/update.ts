@@ -2,18 +2,19 @@
  * @author Toru Nagashima <https://github.com/mysticatea>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
+import * as fs from "node:fs"
+import * as path from "node:path"
+import { fileURLToPath } from "node:url"
+import { createIndex } from "./lib/utils.ts"
 
-const fs = require("fs")
-const path = require("path")
-const { createIndex } = require("./lib/utils")
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // docs.
-require("./update-docs-headers")
-require("./update-docs-index")
+import "./update-docs-headers.ts"
+import "./update-docs-index.ts"
 
 // recommended rules.
-require("./update-recommended-rules")
+import "./update-recommended-rules.ts"
 
 // indices.
 for (const dirPath of [
@@ -21,7 +22,7 @@ for (const dirPath of [
     path.resolve(__dirname, "../lib/rules"),
     path.resolve(__dirname, "../lib/utils"),
 ]) {
-    createIndex(dirPath).then((content) =>
-        fs.writeFileSync(`${dirPath}.js`, content)
-    )
+    createIndex(dirPath).then((content) => {
+        fs.writeFileSync(`${dirPath}.ts`, content)
+    })
 }

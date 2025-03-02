@@ -1,20 +1,30 @@
 {
     "compilerOptions": {
-        "allowSyntheticDefaultImports": false,
-        "esModuleInterop": false,
+        "allowImportingTsExtensions": true,
+        "allowSyntheticDefaultImports": true,
+        "declaration": true,
+        "declarationMap": true,
+        "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": true,
         "lib": ["ESNext"],
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
+        "module": "nodenext",
+        "moduleDetection": "force",
+        "moduleResolution": "nodenext",
         "noEmit": true,
+        "noEmitOnError": true,
+        "noErrorTruncation": true,
+        "outDir": "./dist",
         "resolveJsonModule": true,
+        "rewriteRelativeImportExtensions": true,
+        "rootDir": "./",
         "skipLibCheck": true,
+        "sourceMap": true,
         "strict": true,
-        "target": "ESNext",
+        "target": "esnext",
+        "types": ["node", "vitest/globals", "vitest/importMeta"],
         "useDefineForClassFields": true,
-        "useUnknownInCatchVariables": true,
-        "verbatimModuleSyntax": true
+        "useUnknownInCatchVariables": true
     },
-    "include": ["."]
+    "include": ["**/*"]
 }

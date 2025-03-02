@@ -2,11 +2,10 @@
  * @author Toru Nagashima <https://github.com/mysticatea>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
+import { ESLint } from "eslint"
+import * as fs from "node:fs"
+import * as path from "node:path"
 
-const fs = require("fs")
-const path = require("path")
-const { ESLint } = require("eslint")
 const linter = new ESLint({ fix: true })
 
 /**
@@ -14,7 +13,7 @@ const linter = new ESLint({ fix: true })
  * @param {string} text The text to format.
  * @returns {Promise<string>} The formatted text.
  */
-function format(text) {
+function format(text: string): Promise<string> {
     return linter.lintText(text).then(([{ output }]) => output || text)
 }
 
@@ -23,10 +22,9 @@ function format(text) {
  * @param {string} dirPath The path to the directory to create index.
  * @returns {Promise<string>} The index file content.
  */
-function createIndex(dirPath) {
+function createIndex(dirPath: string): Promise<string> {
     const dirName = path.basename(dirPath)
     return format(`/** DON'T EDIT THIS FILE; was created by scripts. */
-    "use strict"
 
     module.exports = {
         ${fs
@@ -38,7 +36,4 @@ function createIndex(dirPath) {
     `)
 }
 
-module.exports = {
-    createIndex,
-    format,
-}
+export { createIndex, format }

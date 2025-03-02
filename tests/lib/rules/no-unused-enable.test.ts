@@ -2,11 +2,8 @@
  * @author Toru Nagashima <https://github.com/mysticatea>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
-
-const semver = require("semver")
-const { Linter, RuleTester } = require("eslint")
-const rule = require("../../../lib/rules/no-unused-enable")
+import { RuleTester } from "eslint"
+import rule from "../../../lib/rules/no-unused-enable.ts"
 const tester = new RuleTester()
 
 tester.run("no-unused-enable", rule, {
@@ -86,22 +83,18 @@ var a = b
             ],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  {
-                      code: "/*eslint-enable -- description*/",
-                      errors: [
-                          {
-                              message:
-                                  "ESLint rules are re-enabled but those have not been disabled.",
-                              line: 1,
-                              column: 0,
-                              endLine: 1,
-                              endColumn: 33,
-                          },
-                      ],
-                  },
-              ]
-            : []),
+        {
+            code: "/*eslint-enable -- description*/",
+            errors: [
+                {
+                    message:
+                        "ESLint rules are re-enabled but those have not been disabled.",
+                    line: 1,
+                    column: 0,
+                    endLine: 1,
+                    endColumn: 33,
+                },
+            ],
+        },
     ],
 })

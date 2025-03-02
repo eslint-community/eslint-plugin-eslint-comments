@@ -1,41 +1,43 @@
-"use strict"
+import type { TextSourceCode } from "@eslint/core"
+import type { AST, Rule, SourceCode } from "eslint"
+import type { Comment, DirectiveComment } from "./types.ts"
+import * as utils from "./utils.ts"
 
-const utils = require("./utils")
-
-/**
- * @typedef {object} DirectiveComment
- * @property {string} kind The kind of directive comment.
- * @property {string} [value] The directive value if it is `eslint-` comment.
- * @property {string} description The description of the directive comment.
- * @property {object} node The node of the directive comment.
- * @property {import("@eslint/core").SourceRange} range The range of the directive comment.
- * @property {import("@eslint/core").SourceLocation} loc The location of the directive comment.
- */
-
-const pool = new WeakMap()
+const pool = new WeakMap<AST.Program, DirectiveComment[]>()
 
 /**
  * @param {import('eslint').SourceCode} sourceCode - The source code to scan.
  * @returns {DirectiveComment[]} The directive comments.
  */
-function getAllDirectiveCommentsFromAllComments(sourceCode) {
+function getAllDirectiveCommentsFromAllComments(
+    sourceCode: SourceCode
+): DirectiveComment[] {
     return sourceCode
         .getAllComments()
         .map((comment) => ({
             comment,
             directiveComment: utils.parseDirectiveComment(comment),
         }))
-        .filter(({ directiveComment }) => Boolean(directiveComment))
+        .filter(
+            (
+                infoObject
+            ): infoObject is {
+                comment: Comment & Required<Pick<Comment, "range">>
+                directiveComment: NonNullable<
+                    ReturnType<typeof utils.parseDirectiveComment>
+                >
+            } => Boolean(infoObject.directiveComment)
+        )
         .map(
             ({ comment, directiveComment }) =>
-                /** @type {DirectiveComment} */ ({
+                ({
                     kind: directiveComment.kind,
                     value: directiveComment.value,
                     description: directiveComment.description,
                     node: comment,
                     range: comment.range,
-                    loc: comment.loc,
-                })
+                    loc: comment.loc!,
+                }) satisfies DirectiveComment
         )
 }
 
@@ -43,10 +45,18 @@ function getAllDirectiveCommentsFromAllComments(sourceCode) {
  * @param {import('@eslint/core').TextSourceCode} sourceCode - The source code to scan.
  * @returns {DirectiveComment[]} The directive comments.
  */
-function getAllDirectiveCommentsFromInlineConfigNodes(sourceCode) {
+function getAllDirectiveCommentsFromInlineConfigNodes(
+    sourceCode: TextSourceCode &
+        Required<
+            Pick<
+                TextSourceCode,
+                "getInlineConfigNodes" | "getDisableDirectives"
+            >
+        >
+): DirectiveComment[] {
     const result = sourceCode.getDisableDirectives().directives.map(
         (directive) =>
-            /** @type {DirectiveComment} */ ({
+            ({
                 kind: `eslint-${directive.type}`,
                 value: directive.value,
                 description: directive.justification,
@@ -55,7 +65,7 @@ function getAllDirectiveCommentsFromInlineConfigNodes(sourceCode) {
                 get loc() {
                     return sourceCode.getLoc(directive.node)
                 },
-            })
+            }) satisfies DirectiveComment
     )
 
     return result.concat(
@@ -87,68 +97,86 @@ function getAllDirectiveCommentsFromInlineConfigNodes(sourceCode) {
                 }
             })
             .filter(
-                ({ directiveComment }) =>
-                    directiveComment != null &&
+                (
+                    infoObject
+                ): infoObject is Pick<DirectiveComment, "node" | "range"> & {
+                    directiveComment: DirectiveComment
+                } =>
+                    infoObject.directiveComment != null &&
                     ![
                         "eslint-disable",
                         "eslint-disable-line",
                         "eslint-disable-next-line",
                         "eslint-enable",
-                    ].includes(directiveComment.kind)
+                    ].includes(infoObject.directiveComment.kind)
             )
             .map(
                 ({ directiveComment, node, range }) =>
-                    /** @type {DirectiveComment} */ ({
+                    ({
                         kind: directiveComment.kind,
                         value: directiveComment.value,
-                        description: directiveComment.description,
+                        description: directiveComment.description!,
                         node,
                         range,
                         get loc() {
                             return sourceCode.getLoc(node)
                         },
-                    })
+                    }) satisfies DirectiveComment
             )
     )
 }
 
-function extractCommentContent(text) {
+function extractCommentContent(text: string): string {
     // Extract comment content from the comment text.
     // The comment format was based on the language comment definition in vscode-eslint.
     // See https://github.com/microsoft/vscode-eslint/blob/c0e753713ea9935667e849d91e549adbff213e7e/server/src/languageDefaults.ts#L14
     return text.startsWith("/*") && text.endsWith("*/")
         ? text.slice(2, -2)
         : text.startsWith("//")
-        ? text.slice(2)
-        : text.startsWith("<!--") && text.endsWith("-->")
-        ? text.slice(4, -3)
-        : text.startsWith("###") && text.endsWith("###")
-        ? text.slice(3, -3)
-        : text.startsWith("#")
-        ? text.slice(1)
-        : text
+          ? text.slice(2)
+          : text.startsWith("<!--") && text.endsWith("-->")
+            ? text.slice(4, -3)
+            : text.startsWith("###") && text.endsWith("###")
+              ? text.slice(3, -3)
+              : text.startsWith("#")
+                ? text.slice(1)
+                : text
 }
 
-module.exports = {
-    /**
-     * Get all directive comments for the given rule context.
-     *
-     * @param {import("@eslint/core").RuleContext} context - The rule context to get.
-     * @returns {DirectiveComment[]} The all directive comments object for the rule context.
-     */
-    getAllDirectiveComments(context) {
-        const sourceCode = context.sourceCode || context.getSourceCode()
-        let result = pool.get(sourceCode.ast)
+/**
+ * Get all directive comments for the given rule context.
+ *
+ * @param {import("@eslint/core").RuleContext} context - The rule context to get.
+ * @returns {DirectiveComment[]} The all directive comments object for the rule context.
+ */
+export function getAllDirectiveComments(
+    context: Parameters<Rule.RuleModule["create"]>[0] & {
+        sourceCode: TextSourceCode &
+            (
+                | Required<
+                      Pick<
+                          TextSourceCode,
+                          "getInlineConfigNodes" | "getDisableDirectives"
+                      >
+                  >
+                | {
+                      getInlineConfigNodes?: never
+                      getDisableDirectives?: never
+                  }
+            )
+    }
+): DirectiveComment[] {
+    const sourceCode = context.sourceCode || context.getSourceCode()
+    let result = pool.get(sourceCode.ast)
 
-        if (result == null) {
-            result =
-                typeof sourceCode.getInlineConfigNodes === "function" &&
-                typeof sourceCode.getDisableDirectives === "function"
-                    ? getAllDirectiveCommentsFromInlineConfigNodes(sourceCode)
-                    : getAllDirectiveCommentsFromAllComments(sourceCode)
-            pool.set(sourceCode.ast, result)
-        }
+    if (result == null) {
+        result =
+            typeof sourceCode.getInlineConfigNodes === "function" &&
+            typeof sourceCode.getDisableDirectives === "function"
+                ? getAllDirectiveCommentsFromInlineConfigNodes(sourceCode)
+                : getAllDirectiveCommentsFromAllComments(sourceCode)
+        pool.set(sourceCode.ast, result)
+    }
 
-        return result
-    },
+    return result
 }

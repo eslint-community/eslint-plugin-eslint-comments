@@ -2,17 +2,9 @@
  * @author Yosuke Ota <https://github.com/ota-meshi>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
-
-const semver = require("semver")
-const { Linter, RuleTester } = require("eslint")
-const rule = require("../../../lib/rules/require-description")
+import { RuleTester } from "eslint"
+import rule from "../../../lib/rules/require-description.ts"
 const tester = new RuleTester()
-
-if (!semver.satisfies(Linter.version, ">=7.0.0")) {
-    // This rule can only be used with ESLint v7.x or later.
-    return
-}
 
 tester.run("require-description", rule, {
     valid: [
@@ -74,19 +66,6 @@ tester.run("require-description", rule, {
             code: "/* globals */",
             options: [{ ignore: ["globals"] }],
         },
-        // Language plugin
-        ...(semver.satisfies(Linter.version, ">=9.6.0")
-            ? [
-                  {
-                      code: "/* eslint-disable */ a {}",
-                      options: [{ ignore: ["eslint-disable"] }],
-                      plugins: {
-                          css: require("@eslint/css").default,
-                      },
-                      language: "css/css",
-                  },
-              ]
-            : []),
     ],
     invalid: [
         {
@@ -222,20 +201,5 @@ tester.run("require-description", rule, {
                 "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
             ],
         },
-        // Language plugin
-        ...(semver.satisfies(Linter.version, ">=9.6.0")
-            ? [
-                  {
-                      code: "/* eslint-disable */ a {}",
-                      plugins: {
-                          css: require("@eslint/css").default,
-                      },
-                      language: "css/css",
-                      errors: [
-                          "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
-                      ],
-                  },
-              ]
-            : []),
     ],
 })

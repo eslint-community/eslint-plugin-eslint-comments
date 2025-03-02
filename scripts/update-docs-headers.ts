@@ -2,11 +2,13 @@
  * @author Toru Nagashima <https://github.com/mysticatea>
  * See LICENSE file in root directory for full license.
  */
-"use strict"
+import * as fs from "node:fs"
+import * as path from "node:path"
+import { fileURLToPath } from "node:url"
+import rules from "./lib/rules.ts"
 
-const fs = require("fs")
-const path = require("path")
-const rules = require("./lib/rules")
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 const PLACE_HOLDER = /^#[^\n]*\n+> .+\n+(?:- .+\n)*\n*/u
 
 for (const rule of rules) {
@@ -18,8 +20,8 @@ for (const rule of rules) {
     }
     if (rule.deprecated) {
         headerLines.push(
-            `- ⚠️ This rule was **deprecated** and replaced by ${rule.replacedBy
-                .map((id) => `[${id}](${id}.md) rule`)
+            `- ⚠️ This rule was **deprecated** and replaced by ${rule
+                .replacedBy!.map((id) => `[${id}](${id}.md) rule`)
                 .join(", ")}.`
         )
     } else if (rule.recommended) {
