@@ -11,6 +11,7 @@ const plugin = {
 
 module.exports = {
     recommended: {
+        name: '@eslint-community/eslint-comments/recommended',
         plugins: {
             "@eslint-community/eslint-comments": plugin,
         },
