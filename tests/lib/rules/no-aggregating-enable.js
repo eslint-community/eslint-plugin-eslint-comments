@@ -32,6 +32,22 @@ tester.run("no-aggregating-enable", rule, {
             /*eslint-enable no-redeclare*/
             /*eslint-enable no-shadow*/
         `,
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: `
+            /*eslint-disable no-redeclare, no-shadow*/
+            /*eslint-enable no-redeclare*/
+            /*eslint-enable no-shadow*/
+            a {}`,
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
+                  },
+              ]
+            : []),
     ],
     invalid: [
         {
@@ -74,6 +90,25 @@ tester.run("no-aggregating-enable", rule, {
                 /*eslint-disable no-shadow*/
                 /*eslint-enable -- description*/
             `,
+                      errors: [
+                          "This `eslint-enable` comment affects 2 `eslint-disable` comments. An `eslint-enable` comment should be for an `eslint-disable` comment.",
+                      ],
+                  },
+              ]
+            : []),
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: `
+                /*eslint-disable no-redeclare*/
+                /*eslint-disable no-shadow*/
+                /*eslint-enable*/
+            a {}`,
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
                       errors: [
                           "This `eslint-enable` comment affects 2 `eslint-disable` comments. An `eslint-enable` comment should be for an `eslint-disable` comment.",
                       ],
