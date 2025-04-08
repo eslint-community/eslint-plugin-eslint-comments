@@ -19,6 +19,18 @@ tester.run("no-unlimited-disable", rule, {
         "/*eslint-disable-next-line eqeqeq*/",
         "var foo;\n//eslint-disable-line eqeqeq",
         "var foo;\n/*eslint-disable-line eqeqeq*/",
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: "/*eslint-disable-line eqeqeq*/ a {}",
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
+                  },
+              ]
+            : []),
     ],
     invalid: [
         {
@@ -98,6 +110,21 @@ tester.run("no-unlimited-disable", rule, {
             ? [
                   {
                       code: "/*eslint-disable -- description */",
+                      errors: [
+                          "Unexpected unlimited 'eslint-disable' comment. Specify some rule names to disable.",
+                      ],
+                  },
+              ]
+            : []),
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: "/* eslint-disable */ a {}",
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
                       errors: [
                           "Unexpected unlimited 'eslint-disable' comment. Specify some rule names to disable.",
                       ],

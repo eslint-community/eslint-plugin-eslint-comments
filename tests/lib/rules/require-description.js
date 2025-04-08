@@ -74,6 +74,19 @@ tester.run("require-description", rule, {
             code: "/* globals */",
             options: [{ ignore: ["globals"] }],
         },
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: "/* eslint-disable */ a {}",
+                      options: [{ ignore: ["eslint-disable"] }],
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
+                  },
+              ]
+            : []),
     ],
     invalid: [
         {
@@ -209,5 +222,20 @@ tester.run("require-description", rule, {
                 "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
             ],
         },
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: "/* eslint-disable */ a {}",
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
+                      errors: [
+                          "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+                      ],
+                  },
+              ]
+            : []),
     ],
 })

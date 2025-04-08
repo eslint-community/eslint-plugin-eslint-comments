@@ -4,7 +4,8 @@
  */
 "use strict"
 
-const { RuleTester } = require("eslint")
+const semver = require("semver")
+const { Linter, RuleTester } = require("eslint")
 const rule = require("../../../lib/rules/no-use")
 const tester = new RuleTester()
 
@@ -62,6 +63,19 @@ tester.run("no-use", rule, {
             code: "/* globals */",
             options: [{ allow: ["globals"] }],
         },
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: "/* eslint-disable */ a {}",
+                      options: [{ allow: ["eslint-disable"] }],
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
+                  },
+              ]
+            : []),
     ],
     invalid: [
         {
@@ -108,5 +122,18 @@ tester.run("no-use", rule, {
             code: "/* globals */",
             errors: ["Unexpected ESLint directive comment."],
         },
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: "/* eslint-disable */ a {}",
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
+                      errors: ["Unexpected ESLint directive comment."],
+                  },
+              ]
+            : []),
     ],
 })
