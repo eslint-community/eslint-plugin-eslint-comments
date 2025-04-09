@@ -48,6 +48,19 @@ tester.run("no-restricted-disable", rule, {
             code: "/*eslint-disable eqeqeq*/",
             options: ["*", "!eqeqeq"],
         },
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: "/*eslint-disable eqeqeq*/ a {}",
+                      options: ["*", "!eqeqeq"],
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
+                  },
+              ]
+            : []),
     ],
     invalid: [
         {
@@ -175,6 +188,20 @@ tester.run("no-restricted-disable", rule, {
                   {
                       code: "/*eslint-disable -- description*/",
                       options: ["eqeqeq"],
+                      errors: ["Disabling 'eqeqeq' is not allowed."],
+                  },
+              ]
+            : []),
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: "/*eslint-disable eqeqeq*/ a {}",
+                      options: ["eqeqeq"],
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
                       errors: ["Disabling 'eqeqeq' is not allowed."],
                   },
               ]

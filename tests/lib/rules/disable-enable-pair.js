@@ -92,6 +92,22 @@ var foo = 1
 `,
               ]
             : []),
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: `
+/*eslint-disable no-undef*/
+/*eslint-enable no-undef*/
+a {}
+`,
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
+                  },
+              ]
+            : []),
     ],
     invalid: [
         {
@@ -227,6 +243,28 @@ console.log();
                               column: 18,
                               endLine: 3,
                               endColumn: 32,
+                          },
+                      ],
+                  },
+              ]
+            : []),
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: "/* eslint-disable no-unused-vars */ a {}",
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
+                      errors: [
+                          {
+                              message:
+                                  "Requires 'eslint-enable' directive for 'no-unused-vars'.",
+                              line: 1,
+                              column: 19,
+                              endLine: 1,
+                              endColumn: 33,
                           },
                       ],
                   },

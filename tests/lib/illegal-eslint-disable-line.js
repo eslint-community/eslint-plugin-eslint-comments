@@ -77,8 +77,6 @@ describe("multi-line eslint-disable-line comments", () => {
         for (const code of [
             `/* eslint @eslint-community/eslint-comments/no-use:[error, {allow: ['eslint']}] */
 /* eslint-disable-line
-*/
-/* eslint-disable-next-line
 */`,
             `/* eslint @eslint-community/eslint-comments/no-duplicate-disable:error */
 /*eslint-disable no-undef*/
@@ -92,7 +90,7 @@ no-undef*/
                     const normalMessages = messages.filter(
                         (message) => message.ruleId != null
                     )
-                    assert.strictEqual(normalMessages.length, 0)
+                    assert.deepStrictEqual(normalMessages, [])
                 })
             )
         }

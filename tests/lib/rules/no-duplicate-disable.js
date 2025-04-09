@@ -29,6 +29,23 @@ tester.run("no-duplicate-disable", rule, {
 /*eslint-disable-next-line semi*/
 /*eslint-disable eqeqeq*/
 `,
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: `
+/*eslint-disable no-undef*/
+/*eslint-disable-line no-unused-vars*/
+/*eslint-disable-next-line semi*/
+/*eslint-disable eqeqeq*/
+a {}`,
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
+                  },
+              ]
+            : []),
     ],
     invalid: [
         {
@@ -129,6 +146,31 @@ tester.run("no-duplicate-disable", rule, {
 // eslint-disable-next-line no-undef -- description
 // eslint-disable-line no-undef -- description
 `,
+                      errors: [
+                          {
+                              message:
+                                  "'no-undef' rule has been disabled already.",
+                              line: 3,
+                              column: 24,
+                              endLine: 3,
+                              endColumn: 32,
+                          },
+                      ],
+                  },
+              ]
+            : []),
+        // Language plugin
+        ...(semver.satisfies(Linter.version, ">=9.6.0")
+            ? [
+                  {
+                      code: `
+/* eslint-disable-next-line no-undef */
+/* eslint-disable-line no-undef */
+a {}`,
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      language: "css/css",
                       errors: [
                           {
                               message:
