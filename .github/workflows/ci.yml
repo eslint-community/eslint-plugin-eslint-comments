@@ -112,7 +112,11 @@ jobs:
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: lts/*
+
+      # npm 11.5.1 or later is required so update to latest to be sure
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - name: 📥 Install dependencies
         run: npm install --legacy-peer-deps
@@ -133,4 +137,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
