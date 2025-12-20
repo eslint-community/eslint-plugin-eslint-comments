@@ -48,6 +48,52 @@ a {}`,
             : []),
     ],
     invalid: [
+        ...(semver.satisfies(Linter.version, ">=8.0.0")
+            ? [
+                  {
+                      code: `
+/*eslint-disable*/
+//eslint-disable-line
+`,
+                      // We disable inline config so that the tester doesn't consider the
+                      //    `eslint-disable` as disabling this very rule. But disabling
+                      //    inline config also leads to two extra errors
+                      ...(semver.satisfies(Linter.version, ">=9.0.0")
+                          ? {
+                                linterOptions: {
+                                    noInlineConfig: true,
+                                },
+                            }
+                          : { noInlineConfig: true }),
+                      errors: [
+                          {
+                              message:
+                                  "'/*eslint-disable*/' has no effect because you have 'noInlineConfig' setting in your config.",
+                              line: 2,
+                              column: 1,
+                              endLine: 2,
+                              endColumn: 19,
+                          },
+                          {
+                              message:
+                                  "ESLint rules have been disabled already.",
+                              line: 3,
+                              column: 0,
+                              endLine: 3,
+                              endColumn: 22,
+                          },
+                          {
+                              message:
+                                  "'//eslint-disable-line' has no effect because you have 'noInlineConfig' setting in your config.",
+                              line: 3,
+                              column: 1,
+                              endLine: 3,
+                              endColumn: 22,
+                          },
+                      ],
+                  },
+              ]
+            : []),
         {
             code: `
 /*eslint-disable no-undef*/
