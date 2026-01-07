@@ -6,8 +6,10 @@
 const assert = require("node:assert")
 const fs = require("node:fs")
 const path = require("node:path")
+const { Linter } = require("eslint")
 const spawn = require("cross-spawn")
 const { rimraf } = require("rimraf")
+const semver = require("semver")
 
 /**
  * Run eslint CLI command with a given source code.
@@ -22,7 +24,9 @@ function runESLint(code) {
                 "--stdin",
                 "--stdin-filename",
                 "test.js",
-                "--no-eslintrc",
+                ...(semver.satisfies(Linter.version, "< 9.0.0")
+                    ? ["--no-eslintrc"]
+                    : []),
                 "--plugin",
                 "@eslint-community/eslint-comments",
                 "--format",
@@ -30,8 +34,12 @@ function runESLint(code) {
             ],
             {
                 stdio: ["pipe", "pipe", "inherit"],
-                // eslint-disable-next-line no-process-env, @eslint-community/mysticatea/node/no-process-env
-                env: { ...process.env, ESLINT_USE_FLAT_CONFIG: "false" },
+                env: {
+                    ...process.env,
+                    ...(semver.satisfies(Linter.version, "< 9.0.0")
+                    ? {ESLINT_USE_FLAT_CONFIG: "false"}
+                    : {}),
+                },
             }
         )
         const chunks = []
