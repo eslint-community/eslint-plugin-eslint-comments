@@ -188,6 +188,19 @@ tester.run("no-use", rule, {
                       language: "css/css",
                       errors: ["Unexpected ESLint directive comment."],
                   },
+                  {
+                      code: "/* c8 ignore next */ a {}",
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      options: [
+                          {
+                              additionalDirectives: ["c8"],
+                          },
+                      ],
+                      language: "css/css",
+                      errors: ["Unexpected directive comment."],
+                  },
               ]
             : []),
     ],

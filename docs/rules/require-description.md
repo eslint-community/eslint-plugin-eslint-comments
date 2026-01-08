@@ -77,7 +77,8 @@ You can specify ignored directive-comments.
     ESLint-based comments are checked. If you wish to check other
     comments, e.g., `istanbul` or `c8` for coverage, you can add them to
     this string array. Note that as with ESLint directives,
-    descriptions must be preceded by two hyphens.
+    descriptions must be preceded by two hyphens. Note that it is possible
+    we may not be able to detect comments for some non-JavaScript languages.
 
 ## Further Reading
 

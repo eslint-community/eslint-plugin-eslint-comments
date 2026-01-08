@@ -53,7 +53,8 @@ You can specify allowed directive-comments.
 -   `additionalDirectives` - By default, only the above-mentioned
     ESLint-based comments are prohibited when not in the `allow` array.
     If you wish to prohibit other comments, e.g., `istanbul` or `c8` for
-    coverage, you can add them to this string array.
+    coverage, you can add them to this string array. Note that it is possible
+    we may not be able to detect comments for some non-JavaScript languages.
 
 ## Known Limitations
 
