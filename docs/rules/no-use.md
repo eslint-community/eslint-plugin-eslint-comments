@@ -37,7 +37,9 @@ You can specify allowed directive-comments.
 }
 ```
 
--   `allow` option is an array to allow specified directive-comments. The value of the array is some of the following strings:
+-   `allow` option is an array to allow specified directive-comments. The value of the array is some of the following strings
+    or one of the strings in `additionalDirectives`:
+
     -   `"eslint"`
     -   `"eslint-disable"`
     -   `"eslint-disable-line"`
@@ -47,6 +49,11 @@ You can specify allowed directive-comments.
     -   `"exported"`
     -   `"global"`
     -   `"globals"`
+
+-   `additionalDirectives` - By default, only the above-mentioned
+    ESLint-based comments are prohibited when not in the `allow` array.
+    If you wish to prohibit other comments, e.g., `istanbul` or `c8` for
+    coverage, you can add them to this string array.
 
 ## Known Limitations
 
