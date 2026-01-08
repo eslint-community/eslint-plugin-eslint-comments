@@ -5,7 +5,7 @@
 This rule warns directive comments without description. A
 description is separated by the directive name (and optional
 instructions) with two hyphens
-(e.g., `/* eslint-disable no-await-in-loop -- Sequential  */`).
+(e.g., `/* eslint-disable no-await-in-loop -- Sequential */`).
 
 :::warning
 This rule can only be used with ESLint v7.x or later.
