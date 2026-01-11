@@ -49,22 +49,43 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        eslint: [8]
-        node: [12.22.0, 12, 14.17.0, 14, 16.0.0, 16, 18.0.0, 18, 20, 22, 24]
+        eslint: [9]
+        node: [18, 20, 22, 24]
         os: [ubuntu-latest]
         include:
           # On other platforms
           - os: windows-latest
-            eslint: 8
+            eslint: 9
             node: 18
           - os: macos-latest
-            eslint: 8
+            eslint: 9
             node: 18
-          # On ESLint 9
-          - eslint: 9
-            node: 18
+          # On old Node versions & ESLint v8
+          - eslint: 8
+            node: 18.0.0
+            os: ubuntu-latest
+          - eslint: 8
+            node: 16
+            os: ubuntu-latest
+          - eslint: 8
+            node: 16.0.0
+            os: ubuntu-latest
+          - eslint: 8
+            node: 14
+            os: ubuntu-latest
+          - eslint: 8
+            node: 14.17.0
+            os: ubuntu-latest
+          - eslint: 8
+            node: 12
+            os: ubuntu-latest
+          - eslint: 8
+            node: 12.22.0
             os: ubuntu-latest
           # On old ESLint versions
+          - eslint: 8
+            node: 18
+            os: ubuntu-latest
           - eslint: 7
             node: 18
             os: ubuntu-latest
