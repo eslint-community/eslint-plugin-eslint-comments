@@ -50,7 +50,7 @@ jobs:
       fail-fast: false
       matrix:
         eslint: [9]
-        node: [18, 20, 22, 24]
+        node: [18.18.0, 18, 20.9.0, 20, 22, 24]
         os: [ubuntu-latest]
         include:
           # On other platforms
@@ -60,28 +60,6 @@ jobs:
           - os: macos-latest
             eslint: 9
             node: 24
-          # On old Node versions & ESLint v8
-          - eslint: 8
-            node: 18.0.0
-            os: ubuntu-latest
-          - eslint: 8
-            node: 16
-            os: ubuntu-latest
-          - eslint: 8
-            node: 16.0.0
-            os: ubuntu-latest
-          - eslint: 8
-            node: 14
-            os: ubuntu-latest
-          - eslint: 8
-            node: 14.17.0
-            os: ubuntu-latest
-          - eslint: 8
-            node: 12
-            os: ubuntu-latest
-          - eslint: 8
-            node: 12.22.0
-            os: ubuntu-latest
           # On old ESLint versions
           - eslint: 8
             node: 24
@@ -94,7 +72,7 @@ jobs:
             os: ubuntu-latest
           # On the minimum supported ESLint/Node.js version
           - eslint: 6.0.0
-            node: 12.22.0
+            node: 18.18.0
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
