@@ -18,7 +18,7 @@ const assert = require("assert")
 const fs = require("fs")
 const path = require("path")
 const spawn = require("cross-spawn")
-const rimraf = require("rimraf")
+const { rimraf } = require("rimraf")
 const semver = require("semver")
 const { Linter } = require("eslint")
 
