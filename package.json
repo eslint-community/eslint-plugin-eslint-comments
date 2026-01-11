@@ -3,7 +3,7 @@
   "version": "0.0.0-semantically-released",
   "description": "Additional ESLint rules for ESLint directive comments.",
   "engines": {
-    "node": "^12.22.0 || ^14.17.0 || >=16.0.0"
+    "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
   },
   "main": "index.js",
   "type": "commonjs",
