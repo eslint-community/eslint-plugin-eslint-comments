@@ -33,20 +33,20 @@ You can specify allowed directive-comments.
 
 ```json
 {
-    "@eslint-community/eslint-comments/no-use": ["error", {"allow": []}]
+    "@eslint-community/eslint-comments/no-use": ["error", { "allow": [] }]
 }
 ```
 
-- `allow` option is an array to allow specified directive-comments. The value of the array is some of the following strings:
-    - `"eslint"`
-    - `"eslint-disable"`
-    - `"eslint-disable-line"`
-    - `"eslint-disable-next-line"`
-    - `"eslint-enable"`
-    - `"eslint-env"`
-    - `"exported"`
-    - `"global"`
-    - `"globals"`
+-   `allow` option is an array to allow specified directive-comments. The value of the array is some of the following strings:
+    -   `"eslint"`
+    -   `"eslint-disable"`
+    -   `"eslint-disable-line"`
+    -   `"eslint-disable-next-line"`
+    -   `"eslint-enable"`
+    -   `"eslint-env"`
+    -   `"exported"`
+    -   `"global"`
+    -   `"globals"`
 
 ## Known Limitations
 
