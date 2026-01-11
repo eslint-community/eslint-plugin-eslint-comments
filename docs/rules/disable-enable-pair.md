@@ -68,7 +68,10 @@ The `allowWholeFile` option lets you allow disabling rules for the entire file w
 
 ```json
 {
-    "@eslint-community/eslint-comments/disable-enable-pair": ["error", {"allowWholeFile": true}]
+    "@eslint-community/eslint-comments/disable-enable-pair": [
+        "error",
+        { "allowWholeFile": true }
+    ]
 }
 ```
 

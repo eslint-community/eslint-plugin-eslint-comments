@@ -26,9 +26,10 @@ npm install --save-dev eslint @eslint-community/eslint-plugin-eslint-comments
 ```
 
 ::: tip Requirements
+
 - Node.js `^18.18.0 || ^20.9.0 || >=21.1.0`
 - ESLint `^8.57.0 || ^9.0.0`
-:::
+  :::
 
 ## 📖 Usage
 
@@ -40,10 +41,7 @@ For example:
 import js from "@eslint/js"
 import comments from "@eslint-community/eslint-plugin-eslint-comments/configs"
 
-export default [
-    js.configs.recommended,
-    comments.recommended,
-]
+export default [js.configs.recommended, comments.recommended]
 ```
 
 If your project's ESLint config runs in CommonJS instead of ESM, use `require()`:
@@ -56,14 +54,14 @@ Either way, you can optionally configure individual rules:
 
 ```js
 // ...
-[
+export default [
     // ...
     comments.recommended,
     {
         rules: {
             "@eslint-community/eslint-comments/no-unused-disable": "error",
             // ...
-        }
+        },
     },
 ]
 ```
@@ -83,11 +81,11 @@ For example:
 {
     "extends": [
         "eslint:recommended",
-        "plugin:@eslint-community/eslint-comments/recommended"
+        "plugin:@eslint-community/eslint-comments/recommended",
     ],
     "rules": {
         // Optional.
-        "@eslint-community/eslint-comments/no-unused-disable": "error"
-    }
+        "@eslint-community/eslint-comments/no-unused-disable": "error",
+    },
 }
 ```

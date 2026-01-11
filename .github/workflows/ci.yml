@@ -1,137 +1,137 @@
 name: CI
 on:
-  push:
-    branches:
-      # default semantic-release branches
-      - +([0-9])?(.{+([0-9]),x}).x
-      - main
-      - next
-      - next-major
-      - beta
-      - alpha
-  pull_request:
-  schedule:
-    - cron: 0 0 * * 0
+    push:
+        branches:
+            # default semantic-release branches
+            - +([0-9])?(.{+([0-9]),x}).x
+            - main
+            - next
+            - next-major
+            - beta
+            - alpha
+    pull_request:
+    schedule:
+        - cron: 0 0 * * 0
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 permissions:
-  contents: write # to be able to publish a GitHub release
-  id-token: write # to enable use of OIDC for npm provenance
-  issues: write # to be able to comment on released issues
-  pull-requests: write # to be able to comment on released pull requests
+    contents: write # to be able to publish a GitHub release
+    id-token: write # to enable use of OIDC for npm provenance
+    issues: write # to be able to comment on released issues
+    pull-requests: write # to be able to comment on released pull requests
 
 jobs:
-  lint:
-    name: ⬣ Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v6
+    lint:
+        name: ⬣ Lint
+        runs-on: ubuntu-latest
+        steps:
+            - name: ⬇️ Checkout repo
+              uses: actions/checkout@v6
 
-      - name: ⎔ Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
+            - name: ⎔ Setup Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24
 
-      - name: 📥 Install dependencies
-        run: npm install
+            - name: 📥 Install dependencies
+              run: npm install
 
-      - name: ▶️ Run lint script
-        run: npm run lint
+            - name: ▶️ Run lint script
+              run: npm run lint
 
-  test:
-    name:
-      🧪 Test (Node@${{ matrix.node }} - ESLint@${{ matrix.eslint }} - ${{
-      matrix.os }})
-    strategy:
-      fail-fast: false
-      matrix:
-        eslint: [9]
-        node: [18.18.0, 18, 20.9.0, 20, 22, 24]
-        os: [ubuntu-latest]
-        include:
-          # On other platforms
-          - os: windows-latest
-            eslint: 9
-            node: 24
-          - os: macos-latest
-            eslint: 9
-            node: 24
-          # On old ESLint versions
-          - eslint: 8
-            node: 24
-            os: ubuntu-latest
-          - eslint: 8.57.0
-            node: 24
-            os: ubuntu-latest
-          # On the minimum supported ESLint/Node.js version
-          - eslint: 8.57.0
-            node: 18.18.0
-            os: ubuntu-latest
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v6
+    test:
+        name:
+            🧪 Test (Node@${{ matrix.node }} - ESLint@${{ matrix.eslint }} - ${{
+            matrix.os }})
+        strategy:
+            fail-fast: false
+            matrix:
+                eslint: [9]
+                node: [18.18.0, 18, 20.9.0, 20, 22, 24]
+                os: [ubuntu-latest]
+                include:
+                    # On other platforms
+                    - os: windows-latest
+                      eslint: 9
+                      node: 24
+                    - os: macos-latest
+                      eslint: 9
+                      node: 24
+                    # On old ESLint versions
+                    - eslint: 8
+                      node: 24
+                      os: ubuntu-latest
+                    - eslint: 8.57.0
+                      node: 24
+                      os: ubuntu-latest
+                    # On the minimum supported ESLint/Node.js version
+                    - eslint: 8.57.0
+                      node: 18.18.0
+                      os: ubuntu-latest
+        runs-on: ${{ matrix.os }}
+        steps:
+            - name: ⬇️ Checkout repo
+              uses: actions/checkout@v6
 
-      - name: ⎔ Setup Node v${{ matrix.node }}
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ matrix.node }}
+            - name: ⎔ Setup Node v${{ matrix.node }}
+              uses: actions/setup-node@v6
+              with:
+                  node-version: ${{ matrix.node }}
 
-      - name: 📥 Install dependencies
-        run: npm install --legacy-peer-deps
+            - name: 📥 Install dependencies
+              run: npm install --legacy-peer-deps
 
-      - name: 📥 Install ESLint v${{ matrix.eslint }}
-        run: npm install --save-dev eslint@${{ matrix.eslint }}
+            - name: 📥 Install ESLint v${{ matrix.eslint }}
+              run: npm install --save-dev eslint@${{ matrix.eslint }}
 
-      - name: ▶️ Run test script
-        run: npm run test
+            - name: ▶️ Run test script
+              run: npm run test
 
-      - name: ⬆️ Upload coverage report
-        uses: codecov/codecov-action@v5
+            - name: ⬆️ Upload coverage report
+              uses: codecov/codecov-action@v5
 
-  release:
-    name: 🚀 Release
-    needs: [ lint, test ]
-    runs-on: ubuntu-latest
-    if:
-      github.repository == 'eslint-community/eslint-plugin-eslint-comments' &&
-      contains('refs/heads/main,refs/heads/next,refs/heads/beta,refs/heads/alpha',
-      github.ref) && github.event_name == 'push'
-    steps:
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v6
+    release:
+        name: 🚀 Release
+        needs: [lint, test]
+        runs-on: ubuntu-latest
+        if:
+            github.repository == 'eslint-community/eslint-plugin-eslint-comments' &&
+            contains('refs/heads/main,refs/heads/next,refs/heads/beta,refs/heads/alpha',
+            github.ref) && github.event_name == 'push'
+        steps:
+            - name: ⬇️ Checkout repo
+              uses: actions/checkout@v6
 
-      - name: ⎔ Setup node
-        uses: actions/setup-node@v6
-        with:
-          node-version: lts/*
+            - name: ⎔ Setup node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: lts/*
 
-      # npm 11.5.1 or later is required so update to latest to be sure
-      - name: Update npm
-        run: npm install -g npm@latest
+            # npm 11.5.1 or later is required so update to latest to be sure
+            - name: Update npm
+              run: npm install -g npm@latest
 
-      - name: 📥 Install dependencies
-        run: npm install --legacy-peer-deps
+            - name: 📥 Install dependencies
+              run: npm install --legacy-peer-deps
 
-      - name: 🚀 Release
-        uses: cycjimmy/semantic-release-action@v6
-        with:
-          # semantic-release@v25 is required for trusted publishing.
-          # https://github.com/semantic-release/semantic-release/releases/tag/v25.0.1
-          semantic_version: 25
-          branches: |
-            [
-              '+([0-9])?(.{+([0-9]),x}).x',
-              'main',
-              'next',
-              'next-major',
-              {name: 'beta', prerelease: true},
-              {name: 'alpha', prerelease: true}
-            ]
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
+            - name: 🚀 Release
+              uses: cycjimmy/semantic-release-action@v6
+              with:
+                  # semantic-release@v25 is required for trusted publishing.
+                  # https://github.com/semantic-release/semantic-release/releases/tag/v25.0.1
+                  semantic_version: 25
+                  branches: |
+                      [
+                        '+([0-9])?(.{+([0-9]),x}).x',
+                        'main',
+                        'next',
+                        'next-major',
+                        {name: 'beta', prerelease: true},
+                        {name: 'alpha', prerelease: true}
+                      ]
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NPM_CONFIG_PROVENANCE: true
