@@ -13,9 +13,9 @@ The purpose of this plugin is to apply best practices on directive comments such
 
 For example,
 
-- to disallow unused disabling.
-- to disallow non-effect enabling.
-- to require rule IDs for disabling and enabling.
+-   to disallow unused disabling.
+-   to disallow non-effect enabling.
+-   to require rule IDs for disabling and enabling.
 
 ## 💿 Installation
 
@@ -26,8 +26,10 @@ npm install --save-dev eslint @eslint-community/eslint-plugin-eslint-comments
 ```
 
 ::: tip Requirements
-- Node.js `^12.22.0 || ^14.17.0 || >=16.0.0`
-- ESLint `^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0`
+
+-   Node.js `^12.22.0 || ^14.17.0 || >=16.0.0`
+-   ESLint `^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0`
+
 :::
 
 ## 📖 Usage
@@ -40,10 +42,7 @@ For example:
 import js from "@eslint/js"
 import comments from "@eslint-community/eslint-plugin-eslint-comments/configs"
 
-export default [
-    js.configs.recommended,
-    comments.recommended,
-]
+export default [js.configs.recommended, comments.recommended]
 ```
 
 If your project's ESLint config runs in CommonJS instead of ESM, use `require()`:
@@ -56,14 +55,14 @@ Either way, you can optionally configure individual rules:
 
 ```js
 // ...
-[
+export default [
     // ...
     comments.recommended,
     {
         rules: {
             "@eslint-community/eslint-comments/no-unused-disable": "error",
             // ...
-        }
+        },
     },
 ]
 ```

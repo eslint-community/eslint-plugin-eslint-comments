@@ -2,7 +2,7 @@
 
 > require a `eslint-enable` comment for every `eslint-disable` comment
 
-- 🌟 The `"extends": "plugin:@eslint-community/eslint-comments/recommended"` property in a configuration file enables this rule.
+-   🌟 The `"extends": "plugin:@eslint-community/eslint-comments/recommended"` property in a configuration file enables this rule.
 
 `eslint-disable` directive-comments disable ESLint rules in all lines preceded by the comment.
 If you forget `eslint-enable` directive-comment, you may overlook ESLint warnings unintentionally.
@@ -68,7 +68,10 @@ The `allowWholeFile` option lets you allow disabling rules for the entire file w
 
 ```json
 {
-    "@eslint-community/eslint-comments/disable-enable-pair": ["error", {"allowWholeFile": true}]
+    "@eslint-community/eslint-comments/disable-enable-pair": [
+        "error",
+        { "allowWholeFile": true }
+    ]
 }
 ```
 
