@@ -4,8 +4,8 @@
  */
 "use strict"
 
-const fs = require("fs")
-const path = require("path")
+const fs = require("node:fs")
+const path = require("node:path")
 
 /**
  * @type {{id:string,name:string,category:string,description:string,recommended:boolean,fixable:boolean,deprecated:boolean,replacedBy:(string[]|null)}[]}
