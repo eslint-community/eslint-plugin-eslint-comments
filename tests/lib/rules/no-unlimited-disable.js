@@ -106,16 +106,12 @@ tester.run("no-unlimited-disable", rule, {
             ],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  {
-                      code: "/*eslint-disable -- description */",
-                      errors: [
-                          "Unexpected unlimited 'eslint-disable' comment. Specify some rule names to disable.",
-                      ],
-                  },
-              ]
-            : []),
+        {
+            code: "/*eslint-disable -- description */",
+            errors: [
+                "Unexpected unlimited 'eslint-disable' comment. Specify some rule names to disable.",
+            ],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [

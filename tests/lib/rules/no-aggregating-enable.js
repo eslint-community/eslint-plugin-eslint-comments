@@ -82,20 +82,16 @@ tester.run("no-aggregating-enable", rule, {
             ],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  {
-                      code: `
+        {
+            code: `
                 /*eslint-disable no-redeclare*/
                 /*eslint-disable no-shadow*/
                 /*eslint-enable -- description*/
             `,
-                      errors: [
-                          "This `eslint-enable` comment affects 2 `eslint-disable` comments. An `eslint-enable` comment should be for an `eslint-disable` comment.",
-                      ],
-                  },
-              ]
-            : []),
+            errors: [
+                "This `eslint-enable` comment affects 2 `eslint-disable` comments. An `eslint-enable` comment should be for an `eslint-disable` comment.",
+            ],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [

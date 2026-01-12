@@ -183,15 +183,11 @@ tester.run("no-restricted-disable", rule, {
             ],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  {
-                      code: "/*eslint-disable -- description*/",
-                      options: ["eqeqeq"],
-                      errors: ["Disabling 'eqeqeq' is not allowed."],
-                  },
-              ]
-            : []),
+        {
+            code: "/*eslint-disable -- description*/",
+            options: ["eqeqeq"],
+            errors: ["Disabling 'eqeqeq' is not allowed."],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [

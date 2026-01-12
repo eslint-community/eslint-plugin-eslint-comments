@@ -139,26 +139,21 @@ a {}`,
             ],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  {
-                      code: `
+        {
+            code: `
 // eslint-disable-next-line no-undef -- description
 // eslint-disable-line no-undef -- description
 `,
-                      errors: [
-                          {
-                              message:
-                                  "'no-undef' rule has been disabled already.",
-                              line: 3,
-                              column: 24,
-                              endLine: 3,
-                              endColumn: 32,
-                          },
-                      ],
-                  },
-              ]
-            : []),
+            errors: [
+                {
+                    message: "'no-undef' rule has been disabled already.",
+                    line: 3,
+                    column: 24,
+                    endLine: 3,
+                    endColumn: 32,
+                },
+            ],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
