@@ -22,7 +22,9 @@ tester.run("require-description", rule, {
         "/* exported -- description */",
         "/* global -- description */",
         "/* globals -- description */",
-        "/* eslint-env -- description */",
+        ...(semver.satisfies(Linter.version, "< 9.0.0")
+            ? ["/* eslint-env -- description */"]
+            : []),
         "/* just eslint in a normal comment */",
         "// eslint-disable-line -- description",
         "// eslint-disable-next-line -- description",
@@ -34,10 +36,14 @@ tester.run("require-description", rule, {
             code: "/* eslint */",
             options: [{ ignore: ["eslint"] }],
         },
-        {
-            code: "/* eslint-env */",
-            options: [{ ignore: ["eslint-env"] }],
-        },
+        ...(semver.satisfies(Linter.version, "< 9.0.0")
+            ? [
+                  {
+                      code: "/* eslint-env */",
+                      options: [{ ignore: ["eslint-env"] }],
+                  },
+              ]
+            : []),
         {
             code: "/* eslint-enable */",
             options: [{ ignore: ["eslint-enable"] }],
@@ -101,18 +107,22 @@ tester.run("require-description", rule, {
                 "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
             ],
         },
-        {
-            code: "/* eslint-env */",
-            errors: [
-                "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
-            ],
-        },
-        {
-            code: "/* eslint-env node */",
-            errors: [
-                "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
-            ],
-        },
+        ...(semver.satisfies(Linter.version, "< 9.0.0")
+            ? [
+                  {
+                      code: "/* eslint-env */",
+                      errors: [
+                          "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+                      ],
+                  },
+                  {
+                      code: "/* eslint-env node */",
+                      errors: [
+                          "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+                      ],
+                  },
+              ]
+            : []),
         {
             code: "/* eslint-enable */",
             errors: [
