@@ -4,8 +4,7 @@
  */
 "use strict"
 
-const semver = require("semver")
-const { Linter, RuleTester } = require("eslint")
+const { RuleTester } = require("eslint")
 const rule = require("../../../lib/rules/no-unused-enable")
 const tester = new RuleTester()
 
@@ -86,22 +85,18 @@ var a = b
             ],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  {
-                      code: "/*eslint-enable -- description*/",
-                      errors: [
-                          {
-                              message:
-                                  "ESLint rules are re-enabled but those have not been disabled.",
-                              line: 1,
-                              column: 0,
-                              endLine: 1,
-                              endColumn: 33,
-                          },
-                      ],
-                  },
-              ]
-            : []),
+        {
+            code: "/*eslint-enable -- description*/",
+            errors: [
+                {
+                    message:
+                        "ESLint rules are re-enabled but those have not been disabled.",
+                    line: 1,
+                    column: 0,
+                    endLine: 1,
+                    endColumn: 33,
+                },
+            ],
+        },
     ],
 })

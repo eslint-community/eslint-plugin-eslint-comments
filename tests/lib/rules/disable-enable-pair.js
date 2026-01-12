@@ -80,18 +80,14 @@ var foo = 1
             options: [{ allowWholeFile: true }],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  `
+        `
 /*eslint-disable no-undef -- description*/
 /*eslint-enable no-undef*/
 `,
-                  `
+        `
 /*eslint-disable no-undef,no-unused-vars -- description*/
 /*eslint-enable no-undef,no-unused-vars*/
 `,
-              ]
-            : []),
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
@@ -226,28 +222,24 @@ console.log();
             ],
         },
         // -- description
-        ...(semver.satisfies(Linter.version, ">=7.0.0")
-            ? [
-                  {
-                      code: `
+        {
+            code: `
 {
 /*eslint-disable no-unused-vars -- description */
 }
 `,
-                      options: [{ allowWholeFile: true }],
-                      errors: [
-                          {
-                              message:
-                                  "Requires 'eslint-enable' directive for 'no-unused-vars'.",
-                              line: 3,
-                              column: 18,
-                              endLine: 3,
-                              endColumn: 32,
-                          },
-                      ],
-                  },
-              ]
-            : []),
+            options: [{ allowWholeFile: true }],
+            errors: [
+                {
+                    message:
+                        "Requires 'eslint-enable' directive for 'no-unused-vars'.",
+                    line: 3,
+                    column: 18,
+                    endLine: 3,
+                    endColumn: 32,
+                },
+            ],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [

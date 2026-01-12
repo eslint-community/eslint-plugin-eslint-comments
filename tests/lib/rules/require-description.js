@@ -9,11 +9,6 @@ const { Linter, RuleTester } = require("eslint")
 const rule = require("../../../lib/rules/require-description")
 const tester = new RuleTester()
 
-if (!semver.satisfies(Linter.version, ">=7.0.0")) {
-    // This rule can only be used with ESLint v7.x or later.
-    return
-}
-
 tester.run("require-description", rule, {
     valid: [
         '/* eslint eqeqeq: "off", curly: "error" -- Here\'s a description about why this configuration is necessary. */',
