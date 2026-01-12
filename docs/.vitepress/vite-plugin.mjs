@@ -12,7 +12,7 @@ const index = path.join(pluginRoot, "index.js")
 export function vitePluginGetLinter() {
     return {
         name: "vite-plugin-get-linter",
-        transform(_code, id, _options) {
+        transform(_code, id) {
             if (
                 id.startsWith(libRoot) &&
                 /internal[\\/]get-linters\.js$/u.test(id)
@@ -34,7 +34,6 @@ export function viteCommonjs() {
             }
             const base = transformRequire(code)
             try {
-                // eslint-disable-next-line @eslint-community/mysticatea/node/no-sync
                 const transformed = esbuild.transformSync(base, {
                     format: "esm",
                 })

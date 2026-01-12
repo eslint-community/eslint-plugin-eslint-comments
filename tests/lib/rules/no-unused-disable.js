@@ -49,7 +49,7 @@ function runESLint(code, reportUnusedDisableDirectives = false) {
             ],
             {
                 stdio: ["pipe", "pipe", "inherit"],
-                // eslint-disable-next-line no-process-env, @eslint-community/mysticatea/node/no-process-env
+                // eslint-disable-next-line no-process-env
                 env: { ...process.env, ESLINT_USE_FLAT_CONFIG: "false" },
             }
         )

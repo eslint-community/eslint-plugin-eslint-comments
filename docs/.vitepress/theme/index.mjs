@@ -1,6 +1,4 @@
-// eslint-disable-next-line @eslint-community/mysticatea/node/no-missing-import
 import DefaultTheme from "vitepress/theme"
-// eslint-disable-next-line @eslint-community/mysticatea/node/no-extraneous-import
 import { defineAsyncComponent } from "vue"
 import "./style.css"
 
