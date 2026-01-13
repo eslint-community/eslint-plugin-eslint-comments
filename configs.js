@@ -10,15 +10,15 @@ const plugin = {
 }
 
 const recommended = {
-  name: "@eslint-community/eslint-comments/recommended",
-  plugins: {
-    "@eslint-community/eslint-comments": plugin,
-  },
-  rules: rulesRecommended,
+    name: "@eslint-community/eslint-comments/recommended",
+    plugins: {
+        "@eslint-community/eslint-comments": plugin,
+    },
+    rules: rulesRecommended,
 }
 
 module.exports = {
-  recommended,
+    recommended,
 }
 
 module.exports.default = module.exports
