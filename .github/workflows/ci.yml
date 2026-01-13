@@ -184,7 +184,7 @@ jobs:
 
     release:
         name: 🚀 Release
-        needs: [lint, test]
+        needs: [are-the-types-wrong, lint, test, type-tests]
         runs-on: ubuntu-latest
         if:
             github.repository == 'eslint-community/eslint-plugin-eslint-comments' &&
