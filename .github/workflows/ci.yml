@@ -123,12 +123,12 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: ⬇️ Checkout repo
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             - name: ⎔ Setup Node
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
-                  node-version: 18
+                  node-version: 24
 
             - name: 📥 Install dependencies
               run: npm install --legacy-peer-deps
@@ -152,12 +152,12 @@ jobs:
 
         steps:
             - name: ⬇️ Checkout repo
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             - name: ⎔ Setup Node
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
-                  node-version: 18
+                  node-version: 24
 
             - name: 📥 Install dependencies
               run: npm install
