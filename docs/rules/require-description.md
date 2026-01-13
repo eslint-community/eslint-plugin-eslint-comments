@@ -51,23 +51,26 @@ You can specify ignored directive-comments.
 
 ```json
 {
-    "@eslint-community/eslint-comments/require-description": ["error", {"ignore": []}]
+    "@eslint-community/eslint-comments/require-description": [
+        "error",
+        { "ignore": [] }
+    ]
 }
 ```
 
-- `ignore` option is an array to ignore specified directive-comments. The value of the array is some of the following strings:
-    - `"eslint"`
-    - `"eslint-disable"`
-    - `"eslint-disable-line"`
-    - `"eslint-disable-next-line"`
-    - `"eslint-enable"`
-    - `"eslint-env"`
-    - `"exported"`
-    - `"global"`
-    - `"globals"`
+-   `ignore` option is an array to ignore specified directive-comments. The value of the array is some of the following strings:
+    -   `"eslint"`
+    -   `"eslint-disable"`
+    -   `"eslint-disable-line"`
+    -   `"eslint-disable-next-line"`
+    -   `"eslint-enable"`
+    -   `"eslint-env"`
+    -   `"exported"`
+    -   `"global"`
+    -   `"globals"`
 
 ## Further Reading
 
-- [ESLint RFCs - Description in directive comments]
+-   [ESLint RFCs - Description in directive comments]
 
 [ESLint RFCs - Description in directive comments]: https://github.com/eslint/rfcs/blob/main/designs/2019-description-in-directive-comments/README.md
