@@ -118,9 +118,73 @@ jobs:
             - name: ⬆️ Upload coverage report
               uses: codecov/codecov-action@v5
 
+    are-the-types-wrong:
+        name: 🤔 Are the types wrong?
+        runs-on: ubuntu-latest
+        steps:
+            - name: ⬇️ Checkout repo
+              uses: actions/checkout@v6
+
+            - name: ⎔ Setup Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+
+            - name: 📥 Install dependencies
+              run: npm install --legacy-peer-deps
+
+            - name: ▶️ Run check-exports script
+              run: npm run check-exports -- --format=table
+
+            - name: ▶️ Run test:types script
+              run: npm run test:types
+
+    type-tests:
+        name: 🧪 Type tests with ESLint ${{ matrix.eslint }} and TypeScript ${{ matrix.ts }}
+        runs-on: ubuntu-latest
+
+        strategy:
+            fail-fast: false
+
+            matrix:
+                eslint: [8, 9]
+                ts: ["5.0", "5.9"]
+
+        steps:
+            - name: ⬇️ Checkout repo
+              uses: actions/checkout@v6
+
+            - name: ⎔ Setup Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+
+            - name: 📥 Install dependencies
+              run: npm install
+
+            - name: Pack the package
+              id: pack
+              run: npm install "$(npm pack | tail -n1)"
+
+            - name: 📥 Uninstall @types/eslint
+              if: matrix.eslint != 8
+              run: npm uninstall @types/eslint
+
+            - name: 📥 Install ESLint version ${{ matrix.eslint }}
+              run: npm install --save-dev eslint@${{ matrix.eslint }}
+
+            - name: 📥 Install TypeScript version ${{ matrix.ts }}
+              run: npm install --save-dev typescript@${{ matrix.ts }} -f
+
+            - name: ▶️ Run test:types script
+              run: npm run test:types
+
+            - name: 📝 List version of ESLint
+              run: npm why eslint @types/eslint
+
     release:
         name: 🚀 Release
-        needs: [lint, test]
+        needs: [are-the-types-wrong, lint, test, type-tests]
         runs-on: ubuntu-latest
         if:
             github.repository == 'eslint-community/eslint-plugin-eslint-comments' &&
