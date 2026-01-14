@@ -2,7 +2,7 @@
 
 > disallow a `eslint-enable` comment for multiple `eslint-disable` comments
 
--   🌟 The `"extends": "plugin:@eslint-community/eslint-comments/recommended"` property in a configuration file enables this rule.
+- 🌟 The `"extends": "plugin:@eslint-community/eslint-comments/recommended"` property in a configuration file enables this rule.
 
 `eslint-enable` directive-comments can enable rules which are disabled by different `eslint-disable` directive-comments.
 It can enable a rule unintentionally.

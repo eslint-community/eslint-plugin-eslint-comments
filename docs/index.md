@@ -13,9 +13,9 @@ The purpose of this plugin is to apply best practices on directive comments such
 
 For example,
 
--   to disallow unused disabling.
--   to disallow non-effect enabling.
--   to require rule IDs for disabling and enabling.
+- to disallow unused disabling.
+- to disallow non-effect enabling.
+- to require rule IDs for disabling and enabling.
 
 ## 💿 Installation
 
@@ -27,8 +27,8 @@ npm install --save-dev eslint @eslint-community/eslint-plugin-eslint-comments
 
 ::: tip Requirements
 
--   Node.js `^12.22.0 || ^14.17.0 || >=16.0.0`
--   ESLint `^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0`
+- Node.js `^12.22.0 || ^14.17.0 || >=16.0.0`
+- ESLint `^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0`
 
 :::
 
@@ -82,11 +82,11 @@ For example:
 {
     "extends": [
         "eslint:recommended",
-        "plugin:@eslint-community/eslint-comments/recommended"
+        "plugin:@eslint-community/eslint-comments/recommended",
     ],
     "rules": {
         // Optional.
-        "@eslint-community/eslint-comments/no-unused-disable": "error"
-    }
+        "@eslint-community/eslint-comments/no-unused-disable": "error",
+    },
 }
 ```
