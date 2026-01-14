@@ -63,6 +63,32 @@ tester.run("no-use", rule, {
             code: "/* globals */",
             options: [{ allow: ["globals"] }],
         },
+        {
+            code: "/* c8 ignore next */",
+            options: [
+                {
+                    allow: ["globals", "c8"],
+                    additionalDirectives: ["c8"],
+                },
+            ],
+        },
+        {
+            code: "/* c8 ignore next */",
+            options: [
+                {
+                    additionalDirectives: ["sthelse"],
+                },
+            ],
+        },
+        {
+            code: "/* c8 ignore next */",
+            options: [
+                {
+                    allow: ["globals"],
+                    additionalDirectives: ["sthelse"],
+                },
+            ],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
@@ -122,6 +148,35 @@ tester.run("no-use", rule, {
             code: "/* globals */",
             errors: ["Unexpected ESLint directive comment."],
         },
+        {
+            code: "/* c8 ignore next */",
+            options: [
+                {
+                    additionalDirectives: ["c8"],
+                },
+            ],
+            errors: ["Unexpected directive comment."],
+        },
+        {
+            code: "/* c8 ignore next */",
+            options: [
+                {
+                    allow: ["globals"],
+                    additionalDirectives: ["c8"],
+                },
+            ],
+            errors: ["Unexpected directive comment."],
+        },
+        {
+            code: "/* eslint-disable */",
+            options: [
+                {
+                    allow: ["globals"],
+                    additionalDirectives: ["sthelse"],
+                },
+            ],
+            errors: ["Unexpected ESLint directive comment."],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
@@ -132,6 +187,19 @@ tester.run("no-use", rule, {
                       },
                       language: "css/css",
                       errors: ["Unexpected ESLint directive comment."],
+                  },
+                  {
+                      code: "/* c8 ignore next */ a {}",
+                      plugins: {
+                          css: require("@eslint/css").default,
+                      },
+                      options: [
+                          {
+                              additionalDirectives: ["c8"],
+                          },
+                      ],
+                      language: "css/css",
+                      errors: ["Unexpected directive comment."],
                   },
               ]
             : []),
