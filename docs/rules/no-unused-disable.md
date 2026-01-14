@@ -7,6 +7,10 @@ In that case, you should remove the garbage as soon as possible since the garbag
 
 This rule warns unnecessary `eslint-disable` directive-comments.
 
+::: tip
+This rule is deprecated, since you can now use ESLint's built-in [`linterOptions.reportUnusedDisableDirectives`](https://eslint.org/docs/latest/use/configure/rules#report-unused-eslint-disable-comments) to report unused `eslint-disable` comments
+:::
+
 ## Rule Details
 
 Examples of :-1: **incorrect** code for this rule:
