@@ -91,31 +91,31 @@ watch(
     () => props.modelValue,
     (value) => {
         setLeftValue(value)
-    },
+    }
 )
 watch(
     () => props.rightCode,
     (value) => {
         setRightValue(value)
-    },
+    }
 )
 watch(
     () => props.language,
     (value) => {
         setModelLanguage(value)
-    },
+    }
 )
 watch(
     () => props.markers,
     (value) => {
         setLeftMarkers(value)
-    },
+    }
 )
 watch(
     () => props.rightMarkers,
     (value) => {
         setRightMarkers(value)
-    },
+    }
 )
 watch(
     () => props.provideCodeActions,
@@ -123,14 +123,14 @@ watch(
         if (value) {
             registerCodeActionProvider(value)
         }
-    },
+    }
 )
 
 watch(
     () => props.diffEditor,
     () => {
         setup()
-    },
+    }
 )
 
 /** setup monaco */

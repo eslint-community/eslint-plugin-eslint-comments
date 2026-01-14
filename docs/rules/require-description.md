@@ -51,7 +51,10 @@ You can specify ignored directive-comments.
 
 ```json
 {
-    "@eslint-community/eslint-comments/require-description": ["error", {"ignore": []}]
+    "@eslint-community/eslint-comments/require-description": [
+        "error",
+        { "ignore": [] }
+    ]
 }
 ```
 

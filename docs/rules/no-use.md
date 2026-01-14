@@ -33,7 +33,7 @@ You can specify allowed directive-comments.
 
 ```json
 {
-    "@eslint-community/eslint-comments/no-use": ["error", {"allow": []}]
+    "@eslint-community/eslint-comments/no-use": ["error", { "allow": [] }]
 }
 ```
 

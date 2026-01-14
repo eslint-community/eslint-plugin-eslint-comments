@@ -76,7 +76,7 @@ This rule takes a list of strings, where each string is a glob pattern. For exam
 {
     "no-restricted-disable": [
         "error",
-        "*",          // any rules
+        "*", // any rules
         "!no-console" // but except `no-console`.
     ]
 }

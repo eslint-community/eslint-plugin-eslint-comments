@@ -12,7 +12,8 @@ It can enable a rule unintentionally.
 f()
 /*eslint-disable no-var */
 var a
-/*eslint-enable */ "※ Enables both no-undef and no-var."
+    /*eslint-enable */
+;("※ Enables both no-undef and no-var.")
 ```
 
 This rule warns `eslint-enable` directive-comments which enable rules for multiple `eslint-disable` directive-comments.
