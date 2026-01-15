@@ -25,34 +25,41 @@ const { Linter } = require("eslint")
 /**
  * Run eslint CLI command with a given source code.
  * @param {string} code The source code to lint.
- * @param {boolean} [reportUnusedDisableDirectives] The flag to enable `--report-unused-disable-directives` option.
+ * @param {boolean|string} [reportUnusedDisableDirectives] The flag to enable `--report-unused-disable-directives` option, or severity string.
  * @returns {Promise<Message[]>} The result message.
  */
 function runESLint(code, reportUnusedDisableDirectives = false) {
     return new Promise((resolve, reject) => {
-        const cp = spawn(
-            "eslint",
-            [
-                "--stdin",
-                "--stdin-filename",
-                "test.js",
-                "--no-eslintrc",
-                "--plugin",
-                "@eslint-community/eslint-comments",
-                "--rule",
-                "@eslint-community/eslint-comments/no-unused-disable:error",
-                "--format",
-                "json",
-                ...(reportUnusedDisableDirectives
-                    ? ["--report-unused-disable-directives"]
-                    : []),
-            ],
-            {
-                stdio: ["pipe", "pipe", "inherit"],
-                // eslint-disable-next-line no-process-env
-                env: { ...process.env, ESLINT_USE_FLAT_CONFIG: "false" },
+        const args = [
+            "--stdin",
+            "--stdin-filename",
+            "test.js",
+            "--no-eslintrc",
+            "--plugin",
+            "@eslint-community/eslint-comments",
+            "--rule",
+            "@eslint-community/eslint-comments/no-unused-disable:error",
+            "--format",
+            "json",
+        ]
+
+        if (reportUnusedDisableDirectives) {
+            if (typeof reportUnusedDisableDirectives === "string") {
+                // Use --report-unused-disable-directives-severity for ESLint 8.56.0+
+                args.push(
+                    "--report-unused-disable-directives-severity",
+                    reportUnusedDisableDirectives
+                )
+            } else {
+                args.push("--report-unused-disable-directives")
             }
-        )
+        }
+
+        const cp = spawn("eslint", args, {
+            stdio: ["pipe", "pipe", "inherit"],
+            // eslint-disable-next-line no-process-env
+            env: { ...process.env, ESLINT_USE_FLAT_CONFIG: "false" },
+        })
         const chunks = []
         let totalLength = 0
 
@@ -953,8 +960,63 @@ var a = b //eslint-disable-line -- description`,
         }
     })
 
-    if (semver.satisfies(Linter.version, "< 9.0.0")) {
+    // Test --report-unused-disable-directives-severity flag for ESLint 8.56.0+
+    if (semver.satisfies(Linter.version, ">= 8.56.0")) {
+        describe("CLI with --report-unused-disable-directives-severity", () => {
+            it("should report both native and plugin messages with severity 'error'", () => {
+                const code = `/*eslint no-undef:off*/
+var a = b //eslint-disable-line`
+
+                return runESLint(code, "error").then((messages) => {
+                    // Should get both native and plugin messages
+                    assert.strictEqual(messages.length, 2)
+                    assert(
+                        messages.some((m) =>
+                            m.message.includes(
+                                "Unused eslint-disable directive"
+                            )
+                        )
+                    )
+                    assert(
+                        messages.some((m) =>
+                            m.message.includes(
+                                "ESLint rules are disabled but never reported"
+                            )
+                        )
+                    )
+                })
+            })
+
+            it("should report both native and plugin messages with severity 'warn'", () => {
+                const code = `/*eslint no-undef:off*/
+var a = b //eslint-disable-line`
+
+                return runESLint(code, "warn").then((messages) => {
+                    // Should get both native and plugin messages
+                    assert.strictEqual(messages.length, 2)
+                    assert(
+                        messages.some((m) =>
+                            m.message.includes(
+                                "Unused eslint-disable directive"
+                            )
+                        )
+                    )
+                    assert(
+                        messages.some((m) =>
+                            m.message.includes(
+                                "ESLint rules are disabled but never reported"
+                            )
+                        )
+                    )
+                })
+            })
+        })
+    }
+
+    if (semver.satisfies(Linter.version, "< 8.57.0")) {
         // Legacy config tests (to hit _verifyWithoutProcessors branches)
+        // Note: These tests only work in ESLint < 8.57.0 because in 8.57.0+,
+        // the plugin loading mechanism changed
         describe("programmatic API with legacy config (eslintrc style)", () => {
             const plugin = require("../../../")
 
