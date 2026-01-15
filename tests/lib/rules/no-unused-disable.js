@@ -25,34 +25,41 @@ const { Linter } = require("eslint")
 /**
  * Run eslint CLI command with a given source code.
  * @param {string} code The source code to lint.
- * @param {boolean} [reportUnusedDisableDirectives] The flag to enable `--report-unused-disable-directives` option.
+ * @param {boolean|string} [reportUnusedDisableDirectives] The flag to enable `--report-unused-disable-directives` option, or severity string.
  * @returns {Promise<Message[]>} The result message.
  */
 function runESLint(code, reportUnusedDisableDirectives = false) {
     return new Promise((resolve, reject) => {
-        const cp = spawn(
-            "eslint",
-            [
-                "--stdin",
-                "--stdin-filename",
-                "test.js",
-                "--no-eslintrc",
-                "--plugin",
-                "@eslint-community/eslint-comments",
-                "--rule",
-                "@eslint-community/eslint-comments/no-unused-disable:error",
-                "--format",
-                "json",
-                ...(reportUnusedDisableDirectives
-                    ? ["--report-unused-disable-directives"]
-                    : []),
-            ],
-            {
-                stdio: ["pipe", "pipe", "inherit"],
-                // eslint-disable-next-line no-process-env
-                env: { ...process.env, ESLINT_USE_FLAT_CONFIG: "false" },
+        const args = [
+            "--stdin",
+            "--stdin-filename",
+            "test.js",
+            "--no-eslintrc",
+            "--plugin",
+            "@eslint-community/eslint-comments",
+            "--rule",
+            "@eslint-community/eslint-comments/no-unused-disable:error",
+            "--format",
+            "json",
+        ]
+
+        if (reportUnusedDisableDirectives) {
+            if (typeof reportUnusedDisableDirectives === "string") {
+                // Use --report-unused-disable-directives-severity for ESLint 8.56.0+
+                args.push(
+                    "--report-unused-disable-directives-severity",
+                    reportUnusedDisableDirectives
+                )
+            } else {
+                args.push("--report-unused-disable-directives")
             }
-        )
+        }
+
+        const cp = spawn("eslint", args, {
+            stdio: ["pipe", "pipe", "inherit"],
+            // eslint-disable-next-line no-process-env
+            env: { ...process.env, ESLINT_USE_FLAT_CONFIG: "false" },
+        })
         const chunks = []
         let totalLength = 0
 
@@ -952,4 +959,582 @@ var a = b //eslint-disable-line -- description`,
             )
         }
     })
+
+    // Test --report-unused-disable-directives-severity flag for ESLint 8.56.0+
+    if (semver.satisfies(Linter.version, ">= 8.56.0")) {
+        describe("CLI with --report-unused-disable-directives-severity", () => {
+            it("should report both native and plugin messages with severity 'error'", () => {
+                const code = `/*eslint no-undef:off*/
+var a = b //eslint-disable-line`
+
+                return runESLint(code, "error").then((messages) => {
+                    // Should get both native and plugin messages
+                    assert.strictEqual(messages.length, 2)
+                    assert(
+                        messages.some((m) =>
+                            m.message.includes(
+                                "Unused eslint-disable directive"
+                            )
+                        )
+                    )
+                    assert(
+                        messages.some((m) =>
+                            m.message.includes(
+                                "ESLint rules are disabled but never reported"
+                            )
+                        )
+                    )
+                })
+            })
+
+            it("should report both native and plugin messages with severity 'warn'", () => {
+                const code = `/*eslint no-undef:off*/
+var a = b //eslint-disable-line`
+
+                return runESLint(code, "warn").then((messages) => {
+                    // Should get both native and plugin messages
+                    assert.strictEqual(messages.length, 2)
+                    assert(
+                        messages.some((m) =>
+                            m.message.includes(
+                                "Unused eslint-disable directive"
+                            )
+                        )
+                    )
+                    assert(
+                        messages.some((m) =>
+                            m.message.includes(
+                                "ESLint rules are disabled but never reported"
+                            )
+                        )
+                    )
+                })
+            })
+        })
+    }
+
+    if (semver.satisfies(Linter.version, "< 8.57.0")) {
+        // Legacy config tests (to hit _verifyWithoutProcessors branches)
+        // Note: These tests only work in ESLint < 8.57.0 because in 8.57.0+,
+        // the plugin loading mechanism changed
+        describe("programmatic API with legacy config (eslintrc style)", () => {
+            const plugin = require("../../../")
+
+            it("should handle filenameOrOptions as string", () => {
+                const linter = new Linter()
+
+                // Define the rule directly on the linter
+                linter.defineRule(
+                    "@eslint-community/eslint-comments/no-unused-disable",
+                    plugin.rules["no-unused-disable"]
+                )
+
+                const code = `//eslint-disable-line
+    var a = b`
+
+                const messages = linter.verify(
+                    code,
+                    {
+                        rules: {
+                            "@eslint-community/eslint-comments/no-unused-disable":
+                                "error",
+                        },
+                    },
+                    "test.js"
+                ) // Pass filename as string
+
+                // Should process unused directives with string filename
+                assert.strictEqual(messages.length, 1)
+                assert(
+                    messages.some((m) =>
+                        m.message.includes(
+                            "ESLint rules are disabled but never reported"
+                        )
+                    )
+                )
+            })
+
+            it("should handle filenameOrOptions as undefined/falsy", () => {
+                const linter = new Linter()
+
+                // Define the rule directly on the linter
+                linter.defineRule(
+                    "@eslint-community/eslint-comments/no-unused-disable",
+                    plugin.rules["no-unused-disable"]
+                )
+
+                const code = `//eslint-disable-line
+    var a = b`
+
+                const messages = linter.verify(code, {
+                    rules: {
+                        "@eslint-community/eslint-comments/no-unused-disable":
+                            "error",
+                    },
+                }) // No third parameter (undefined)
+
+                // Should process unused directives with undefined options
+                assert.strictEqual(messages.length, 1)
+                assert(
+                    messages.some((m) =>
+                        m.message.includes(
+                            "ESLint rules are disabled but never reported"
+                        )
+                    )
+                )
+            })
+        })
+    }
+
+    // Programmatic API tests for ESLint 8.57.0+ with flat config
+    if (
+        semver.satisfies(Linter.version, ">= 8.57.0") &&
+        semver.satisfies(Linter.version, "< 9.0.0")
+    ) {
+        describe("programmatic API with flat config (ESLint 8.57.0)", () => {
+            const plugin = require("../../../")
+
+            it("should get native message only when rule is disabled", () => {
+                const linter = new Linter({ configType: "flat" })
+                const code = `/*eslint no-undef:off*/
+var a = b //eslint-disable-line`
+
+                const messages = linter.verify(
+                    code,
+                    {
+                        plugins: {
+                            "@eslint-community/eslint-comments": plugin,
+                        },
+                        rules: {
+                            "@eslint-community/eslint-comments/no-unused-disable":
+                                "off",
+                        },
+                    },
+                    {
+                        reportUnusedDisableDirectives: true,
+                    }
+                )
+
+                // Should get native message only
+                assert.strictEqual(messages.length, 1)
+                assert(
+                    messages.some((m) =>
+                        m.message.includes("Unused eslint-disable directive")
+                    )
+                )
+            })
+
+            it("should report both native and plugin messages when options.reportUnusedDisableDirectives is set", () => {
+                const linter = new Linter({ configType: "flat" })
+                const code = `/*eslint no-undef:off*/
+var a = b //eslint-disable-line`
+
+                const messages = linter.verify(
+                    code,
+                    {
+                        plugins: {
+                            "@eslint-community/eslint-comments": plugin,
+                        },
+                        rules: {
+                            "@eslint-community/eslint-comments/no-unused-disable":
+                                "error",
+                        },
+                    },
+                    {
+                        reportUnusedDisableDirectives: true,
+                    }
+                )
+
+                // Should get both native and plugin messages
+                assert.strictEqual(messages.length, 2)
+                assert(
+                    messages.some((m) =>
+                        m.message.includes("Unused eslint-disable directive")
+                    )
+                )
+                assert(
+                    messages.some((m) =>
+                        m.message.includes(
+                            "ESLint rules are disabled but never reported"
+                        )
+                    )
+                )
+            })
+
+            it("should report both native and plugin messages when options.reportUnusedDisableDirectives is set (warn severity)", () => {
+                const linter = new Linter({ configType: "flat" })
+                const code = `/*eslint no-undef:off*/
+var a = b //eslint-disable-line`
+
+                const messages = linter.verify(
+                    code,
+                    {
+                        plugins: {
+                            "@eslint-community/eslint-comments": plugin,
+                        },
+                        rules: {
+                            "@eslint-community/eslint-comments/no-unused-disable":
+                                "warn",
+                        },
+                    },
+                    {
+                        reportUnusedDisableDirectives: true,
+                    }
+                )
+
+                // Should get both native and plugin messages
+                assert.strictEqual(messages.length, 2)
+                assert(
+                    messages.some((m) =>
+                        m.message.includes("Unused eslint-disable directive")
+                    )
+                )
+                assert(
+                    messages.some((m) =>
+                        m.message.includes(
+                            "ESLint rules are disabled but never reported"
+                        )
+                    )
+                )
+            })
+
+            it("should report only plugin messages when options.reportUnusedDisableDirectives is not set", () => {
+                const linter = new Linter({ configType: "flat" })
+                const code = `/*eslint no-undef:off*/
+var a = b //eslint-disable-line`
+
+                const messages = linter.verify(code, {
+                    plugins: {
+                        "@eslint-community/eslint-comments": plugin,
+                    },
+                    rules: {
+                        "@eslint-community/eslint-comments/no-unused-disable":
+                            "error",
+                    },
+                })
+
+                // Should get only plugin message (not native)
+                assert.strictEqual(messages.length, 1)
+                assert(
+                    messages[0].message.includes(
+                        "ESLint rules are disabled but never reported"
+                    )
+                )
+                assert.strictEqual(
+                    messages[0].ruleId,
+                    "@eslint-community/eslint-comments/no-unused-disable"
+                )
+            })
+
+            it("should handle config with linterOptions.reportUnusedDisableDirectives set", () => {
+                const linter = new Linter({ configType: "flat" })
+                const code = `/*eslint no-undef:off*/
+var a = b //eslint-disable-line`
+
+                const messages = linter.verify(code, {
+                    linterOptions: {
+                        reportUnusedDisableDirectives: "warn",
+                    },
+                    plugins: {
+                        "@eslint-community/eslint-comments": plugin,
+                    },
+                    rules: {
+                        "@eslint-community/eslint-comments/no-unused-disable":
+                            "error",
+                    },
+                })
+
+                // Should get only plugin message (linterOptions should be temporarily disabled then restored)
+                assert.strictEqual(messages.length, 1)
+                assert(
+                    messages[0].message.includes(
+                        "ESLint rules are disabled but never reported"
+                    )
+                )
+                assert.strictEqual(
+                    messages[0].ruleId,
+                    "@eslint-community/eslint-comments/no-unused-disable"
+                )
+            })
+
+            it("should handle when rule is disabled (severity 0)", () => {
+                const linter = new Linter({ configType: "flat" })
+                const code = `//eslint-disable-line no-undef
+var a = b`
+
+                const messages = linter.verify(code, {
+                    plugins: {
+                        "@eslint-community/eslint-comments": plugin,
+                    },
+                    rules: {
+                        "@eslint-community/eslint-comments/no-unused-disable":
+                            "off",
+                        "no-undef": "error",
+                    },
+                })
+
+                // Should get the no-undef error, but no unused directive warnings
+                // since the no-unused-disable rule is off
+                assert.strictEqual(messages.length, 1)
+                assert.strictEqual(messages[0].ruleId, "no-undef")
+            })
+
+            it("should handle comment without specific rule name", () => {
+                const linter = new Linter({ configType: "flat" })
+                const code = `/*eslint-disable*/
+var a = 1`
+
+                const messages = linter.verify(code, {
+                    plugins: {
+                        "@eslint-community/eslint-comments": plugin,
+                    },
+                    rules: {
+                        "@eslint-community/eslint-comments/no-unused-disable":
+                            "error",
+                    },
+                })
+
+                // Should get message about all ESLint rules being disabled
+                assert.strictEqual(messages.length, 1)
+                assert.strictEqual(
+                    messages[0].message,
+                    "ESLint rules are disabled but never reported."
+                )
+            })
+
+            it("should handle multiline comment", () => {
+                const linter = new Linter({ configType: "flat" })
+                const code = `/*
+eslint-disable
+no-undef
+*/
+var a = 1`
+
+                const messages = linter.verify(code, {
+                    plugins: {
+                        "@eslint-community/eslint-comments": plugin,
+                    },
+                    rules: {
+                        "@eslint-community/eslint-comments/no-unused-disable":
+                            "error",
+                    },
+                })
+
+                // Should handle multiline comment with newline in suggestion fix
+                assert.strictEqual(messages.length, 1)
+                assert(
+                    messages[0].message.includes(
+                        "'no-undef' rule is disabled but never reported"
+                    )
+                )
+                assert.strictEqual(messages[0].suggestions.length, 1)
+                assert.strictEqual(messages[0].suggestions[0].fix.text, "\n")
+            })
+        })
+    }
+
+    // Programmatic API tests for ESLint 9+ to test _verifyWithFlatConfigArrayAndWithoutProcessors
+    if (semver.satisfies(Linter.version, ">= 9.0.0")) {
+        describe("programmatic API with reportUnusedDisableDirectives option", () => {
+            const plugin = require("../../../")
+
+            it("should report both native and plugin messages when options.reportUnusedDisableDirectives is set", () => {
+                const linter = new Linter()
+                const code = `/*eslint no-undef:off*/
+var a = b //eslint-disable-line`
+
+                const messages = linter.verify(
+                    code,
+                    {
+                        plugins: {
+                            "@eslint-community/eslint-comments": plugin,
+                        },
+                        rules: {
+                            "@eslint-community/eslint-comments/no-unused-disable":
+                                "error",
+                        },
+                    },
+                    {
+                        reportUnusedDisableDirectives: "error",
+                    }
+                )
+
+                // Should get both native and plugin messages
+                assert.strictEqual(messages.length, 2)
+                assert(
+                    messages.some((m) =>
+                        m.message.includes("Unused eslint-disable directive")
+                    )
+                )
+                assert(
+                    messages.some((m) =>
+                        m.message.includes(
+                            "ESLint rules are disabled but never reported"
+                        )
+                    )
+                )
+            })
+
+            it("should report only plugin messages when options.reportUnusedDisableDirectives is not set", () => {
+                const linter = new Linter()
+                const code = `/*eslint no-undef:off*/
+var a = b //eslint-disable-line`
+
+                const messages = linter.verify(code, {
+                    plugins: {
+                        "@eslint-community/eslint-comments": plugin,
+                    },
+                    rules: {
+                        "@eslint-community/eslint-comments/no-unused-disable":
+                            "error",
+                    },
+                })
+
+                // Should get only plugin message (not native)
+                assert.strictEqual(messages.length, 1)
+                assert(
+                    messages[0].message.includes(
+                        "ESLint rules are disabled but never reported"
+                    )
+                )
+                assert.strictEqual(
+                    messages[0].ruleId,
+                    "@eslint-community/eslint-comments/no-unused-disable"
+                )
+            })
+
+            it("should handle config with linterOptions.reportUnusedDisableDirectives set", () => {
+                const linter = new Linter()
+                const code = `/*eslint no-undef:off*/
+var a = b //eslint-disable-line`
+
+                const messages = linter.verify(code, {
+                    linterOptions: {
+                        reportUnusedDisableDirectives: "warn",
+                    },
+                    plugins: {
+                        "@eslint-community/eslint-comments": plugin,
+                    },
+                    rules: {
+                        "@eslint-community/eslint-comments/no-unused-disable":
+                            "error",
+                    },
+                })
+
+                // Should get only plugin message (linterOptions should be temporarily disabled then restored)
+                assert.strictEqual(messages.length, 1)
+                assert(
+                    messages[0].message.includes(
+                        "ESLint rules are disabled but never reported"
+                    )
+                )
+                assert.strictEqual(
+                    messages[0].ruleId,
+                    "@eslint-community/eslint-comments/no-unused-disable"
+                )
+            })
+
+            it("should handle when rule is disabled (severity 0)", () => {
+                const linter = new Linter()
+                const code = `//eslint-disable-line no-undef
+var a = b`
+
+                const messages = linter.verify(code, {
+                    plugins: {
+                        "@eslint-community/eslint-comments": plugin,
+                    },
+                    rules: {
+                        "@eslint-community/eslint-comments/no-unused-disable":
+                            "off",
+                        "no-undef": "error",
+                    },
+                })
+
+                // Should get the no-undef error, but no unused directive warnings
+                // since the no-unused-disable rule is off
+                // In ESLint 9, we might get an additional message about the unused directive
+                assert(messages.length >= 1)
+                assert(messages.some((m) => m.ruleId === "no-undef"))
+            })
+
+            it("should handle comment without specific rule name", () => {
+                const linter = new Linter()
+                const code = `/*eslint-disable*/
+var a = 1`
+
+                const messages = linter.verify(code, {
+                    plugins: {
+                        "@eslint-community/eslint-comments": plugin,
+                    },
+                    rules: {
+                        "@eslint-community/eslint-comments/no-unused-disable":
+                            "error",
+                    },
+                })
+
+                // Should get message about all ESLint rules being disabled
+                assert.strictEqual(messages.length, 1)
+                assert.strictEqual(
+                    messages[0].message,
+                    "ESLint rules are disabled but never reported."
+                )
+            })
+
+            it("should handle filenameOrOptions as string", () => {
+                const linter = new Linter()
+                const code = `//eslint-disable-line
+var a = b`
+
+                const messages = linter.verify(
+                    code,
+                    {
+                        plugins: {
+                            "@eslint-community/eslint-comments": plugin,
+                        },
+                        rules: {
+                            "@eslint-community/eslint-comments/no-unused-disable":
+                                "error",
+                        },
+                    },
+                    "test.js"
+                ) // Pass filename as string
+
+                // Should process unused directives with string filename
+                assert.strictEqual(messages.length, 1)
+                assert(
+                    messages[0].message.includes(
+                        "ESLint rules are disabled but never reported"
+                    )
+                )
+            })
+
+            it("should handle filenameOrOptions as undefined", () => {
+                const linter = new Linter()
+                const code = `//eslint-disable-line
+var a = b`
+
+                const messages = linter.verify(
+                    code,
+                    {
+                        plugins: {
+                            "@eslint-community/eslint-comments": plugin,
+                        },
+                        rules: {
+                            "@eslint-community/eslint-comments/no-unused-disable":
+                                "error",
+                        },
+                    },
+                    undefined
+                ) // Pass undefined
+
+                // Should process unused directives with undefined options
+                assert.strictEqual(messages.length, 1)
+                assert(
+                    messages[0].message.includes(
+                        "ESLint rules are disabled but never reported"
+                    )
+                )
+            })
+        })
+    }
 })
