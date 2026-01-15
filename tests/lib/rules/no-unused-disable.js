@@ -1022,15 +1022,19 @@ var a = b //eslint-disable-line`
 
             it("should handle filenameOrOptions as string", () => {
                 const linter = new Linter()
-                const code = `//eslint-disable-line no-undef
+
+                // Define the rule directly on the linter
+                linter.defineRule(
+                    "@eslint-community/eslint-comments/no-unused-disable",
+                    plugin.rules["no-unused-disable"]
+                )
+
+                const code = `//eslint-disable-line
     var a = b`
 
                 const messages = linter.verify(
                     code,
                     {
-                        plugins: {
-                            "@eslint-community/eslint-comments": plugin,
-                        },
                         rules: {
                             "@eslint-community/eslint-comments/no-unused-disable":
                                 "error",
@@ -1042,21 +1046,27 @@ var a = b //eslint-disable-line`
                 // Should process unused directives with string filename
                 assert.strictEqual(messages.length, 1)
                 assert(
-                    messages[0].message.includes(
-                        "ESLint rules are disabled but never reported"
+                    messages.some((m) =>
+                        m.message.includes(
+                            "ESLint rules are disabled but never reported"
+                        )
                     )
                 )
             })
 
             it("should handle filenameOrOptions as undefined/falsy", () => {
                 const linter = new Linter()
-                const code = `//eslint-disable-line no-undef
+
+                // Define the rule directly on the linter
+                linter.defineRule(
+                    "@eslint-community/eslint-comments/no-unused-disable",
+                    plugin.rules["no-unused-disable"]
+                )
+
+                const code = `//eslint-disable-line
     var a = b`
 
                 const messages = linter.verify(code, {
-                    plugins: {
-                        "@eslint-community/eslint-comments": plugin,
-                    },
                     rules: {
                         "@eslint-community/eslint-comments/no-unused-disable":
                             "error",
@@ -1066,8 +1076,10 @@ var a = b //eslint-disable-line`
                 // Should process unused directives with undefined options
                 assert.strictEqual(messages.length, 1)
                 assert(
-                    messages[0].message.includes(
-                        "ESLint rules are disabled but never reported"
+                    messages.some((m) =>
+                        m.message.includes(
+                            "ESLint rules are disabled but never reported"
+                        )
                     )
                 )
             })
