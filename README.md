@@ -9,7 +9,7 @@ Additional ESLint rules for ESLint directive comments (e.g. `//eslint-disable-li
 
 ## 📖 Usage
 
--   [Documentation](https://eslint-community.github.io/eslint-plugin-eslint-comments)
+- [Documentation](https://eslint-community.github.io/eslint-plugin-eslint-comments)
 
 ## 🚥 Semantic Versioning Policy
 
@@ -17,7 +17,7 @@ Additional ESLint rules for ESLint directive comments (e.g. `//eslint-disable-li
 
 ## 📰 Changelog
 
--   [GitHub Releases](https://github.com/eslint-community/eslint-plugin-eslint-comments/releases)
+- [GitHub Releases](https://github.com/eslint-community/eslint-plugin-eslint-comments/releases)
 
 ## 🍻 Contributing
 
@@ -27,9 +27,9 @@ Please use GitHub's Issues/PRs.
 
 ### Development Tools
 
--   `npm test` runs tests and measures coverage.
--   `npm run build` updates `README.md`, `index.js`, and the header of all rule's documents.
--   `npm run clean` removes the coverage of the last `npm test` command.
--   `npm run coverage` shows the coverage of the last `npm test` command.
--   `npm run lint` runs ESLint for this codebase.
--   `npm run watch` runs tests and measures coverage when source code are changed.
+- `npm test` runs tests and measures coverage.
+- `npm run build` updates `README.md`, `index.js`, and the header of all rule's documents.
+- `npm run clean` removes the coverage of the last `npm test` command.
+- `npm run coverage` shows the coverage of the last `npm test` command.
+- `npm run lint` runs ESLint for this codebase.
+- `npm run watch` runs tests and measures coverage when source code are changed.

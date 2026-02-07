@@ -30,47 +30,62 @@
     "funding": "https://opencollective.com/eslint",
     "license": "MIT",
     "author": "Toru Nagashima",
-    "type": "commonjs",
+    "type": "module",
     "exports": {
         ".": {
-            "types": "./types/index.d.ts",
-            "default": "./index.js"
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "default": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
         },
         "./configs": {
-            "types": "./types/configs.d.ts",
-            "default": "./configs.js"
+            "import": {
+                "types": "./dist/configs.d.ts",
+                "default": "./dist/configs.js"
+            },
+            "default": {
+                "types": "./dist/configs.d.cts",
+                "default": "./dist/configs.cjs"
+            }
         },
         "./package.json": "./package.json"
     },
-    "main": "index.js",
-    "types": "./types/index.d.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "typesVersions": {
         "*": {
             "configs": [
-                "./types/configs.d.ts"
+                "./dist/configs.d.ts"
             ]
         }
     },
+    "sideEffects": false,
     "files": [
-        "configs.js",
-        "lib",
-        "types"
+        "configs.ts",
+        "index.ts",
+        "dist",
+        "lib"
     ],
     "scripts": {
+        "build": "npm run clean && tsdown --config-loader='unrun' --config=tsdown.config.mts",
         "check-exports": "attw --pack",
-        "clean": "rimraf .nyc_output coverage docs/.vitepress/cache",
+        "clean": "rimraf -v .nyc_output/ coverage/ docs/.vitepress/cache/ dist/ .rolldown/",
         "coverage": "nyc report --reporter lcov && opener coverage/lcov-report/index.html",
-        "debug": "mocha \"tests/lib/**/*.js\" --reporter dot --timeout 8000",
         "docs:build": "vitepress build docs",
         "docs:watch": "vitepress dev docs",
         "format": "npm run -s format:prettier -- --write",
         "format:check": "npm run -s format:prettier -- --check",
         "format:prettier": "prettier .",
         "lint": "run-p lint:*",
-        "lint:eslint": "eslint lib scripts tests",
+        "lint:eslint": "eslint --config=eslint.config.mjs .",
         "lint:format": "npm run -s format:check",
-        "test": "nyc npm run debug",
-        "test:types": "tsc -p tsconfig.json",
+        "test": "vitest --run --config=vitest.config.mts",
+        "typecheck": "tsc -p tsconfig.json",
+        "prepack": "npm run build",
         "preversion": "npm test",
         "version": "node scripts/update && git add .",
         "postversion": "git push && git push --tags",
@@ -82,38 +97,42 @@
     },
     "devDependencies": {
         "@arethetypeswrong/cli": "^0.18.2",
-        "@babel/core": "^7.28.6",
+        "@babel/core": "^7.29.0",
         "@babel/eslint-parser": "^7.28.6",
-        "@eslint/core": "^0.13.0",
-        "@eslint/css": "^0.6.0",
-        "@types/eslint": "^8.56.12",
-        "@types/node": "^14.18.63",
+        "@eslint/core": "^1.1.0",
+        "@eslint/css": "^0.14.1",
+        "@eslint/js": "^9.39.2",
+        "@types/cross-spawn": "^6.0.6",
+        "@types/node": "^25.2.1",
+        "@types/semver": "^7.7.1",
         "@vuepress/plugin-pwa": "^1.9.10",
         "cross-spawn": "^7.0.6",
-        "esbuild": "^0.27.2",
-        "eslint": "^8.57.1",
+        "esbuild": "^0.27.3",
+        "eslint": "^9.39.2",
         "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-eslint-plugin": "^5.5.1",
-        "eslint-plugin-n": "^15.7.0",
-        "eslint-plugin-prettier": "^4.2.5",
+        "eslint-plugin-eslint-plugin": "^7.3.0",
         "expect-type": "^1.3.0",
-        "globals": "^13.24.0",
-        "mocha": "^9.2.2",
+        "globals": "^17.3.0",
         "monaco-editor": "^0.55.1",
         "npm-run-all2": "^8.0.4",
-        "nyc": "^15.1.0",
+        "nyc": "^17.1.0",
         "opener": "^1.5.2",
-        "prettier": "2.8.8",
-        "rimraf": "^3.0.2",
-        "semver": "^7.7.3",
+        "prettier": "^3.8.1",
+        "rimraf": "^6.1.2",
+        "rolldown": "^1.0.0-rc.3",
+        "semver": "^7.7.4",
+        "tsdown": "^0.20.3",
         "typescript": "^5.9.3",
-        "vite-plugin-eslint4b": "^0.2.5",
-        "vitepress": "^1.6.4"
+        "typescript-eslint": "^8.54.0",
+        "vite": "^7.3.1",
+        "vite-plugin-eslint4b": "^0.6.0",
+        "vitepress": "^1.6.4",
+        "vitest": "^4.0.18"
     },
     "peerDependencies": {
-        "eslint": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0"
+        "eslint": "^8.0.0 || ^9.0.0"
     },
     "engines": {
-        "node": "^12.22.0 || ^14.17.0 || >=16.0.0"
+        "node": "^20.19.0 || ^22.13.0 || >=24.0.0"
     }
 }
