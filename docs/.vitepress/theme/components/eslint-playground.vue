@@ -84,11 +84,12 @@ const config = computed(() => ({
         Intl: false,
     },
     rules: {
-        ...props.reportUnusedDisable
+        ...(props.reportUnusedDisable
             ? {
-                "@eslint-community/eslint-comments/no-unused-disable": "error"
-            }
-            : {}
+                  "@eslint-community/eslint-comments/no-unused-disable":
+                      "error",
+              }
+            : {}),
     },
     parserOptions: {
         ecmaVersion: "latest",
@@ -103,11 +104,11 @@ onMounted(async () => {
     if (props.code && props.code.trim()) {
         cookedCode.value = (props.code || "").replace(
             /&#x([0-9a-zA-Z]+);/gu,
-            (_, codePoint) => String.fromCodePoint(parseInt(codePoint, 16)),
+            (_, codePoint) => String.fromCodePoint(parseInt(codePoint, 16))
         )
     } else {
         cookedCode.value = `${computeCodeFromSlot(
-            findCode(useSlots().default?.()),
+            findCode(useSlots().default?.())
         ).trim()}\n`
     }
     const lines = cookedCode.value.split("\n").length
@@ -118,7 +119,10 @@ onMounted(async () => {
     linter.value = markRaw(new Linter())
 
     for (const ruleId of Object.keys(rules)) {
-        linter.value.defineRule(`@eslint-community/eslint-comments/${ruleId}`, rules[ruleId])
+        linter.value.defineRule(
+            `@eslint-community/eslint-comments/${ruleId}`,
+            rules[ruleId]
+        )
     }
 })
 
@@ -153,9 +157,7 @@ function computeCodeFromSlot(n) {
     // debugger
     return nodes
         .map((node) =>
-            typeof node === "string"
-                ? node
-                : computeCodeFromSlot(node.children),
+            typeof node === "string" ? node : computeCodeFromSlot(node.children)
         )
         .join("")
 }

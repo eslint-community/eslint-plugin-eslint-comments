@@ -133,8 +133,8 @@ const provideCodeActions = computed(() => (model, _range, context) => {
                     `Fix this ${message.ruleId} problem`,
                     marker,
                     model,
-                    message.fix,
-                ),
+                    message.fix
+                )
             )
         }
         if (message.suggestions) {
@@ -144,8 +144,8 @@ const provideCodeActions = computed(() => (model, _range, context) => {
                         `${suggestion.desc} (${message.ruleId})`,
                         marker,
                         model,
-                        suggestion.fix,
-                    ),
+                        suggestion.fix
+                    )
                 )
             }
         }
@@ -167,7 +167,7 @@ const rightMarkers = computed(() => {
     return messagesToMarkers(
         editor?.getModel() ?? null,
         fixedMessages.value,
-        true,
+        true
     )
 })
 
@@ -182,7 +182,7 @@ watch(
             return null
         }
     },
-    { immediate: true },
+    { immediate: true }
 )
 watch(linter, () => {
     invalidate()
@@ -191,7 +191,7 @@ watch(
     () => props.code,
     (value) => {
         editorValue.value = value
-    },
+    }
 )
 watch(editorValue, () => {
     emit("update:code", editorValue.value)
@@ -205,19 +205,19 @@ watch(
     () => {
         invalidate()
     },
-    { deep: true },
+    { deep: true }
 )
 watch(
     () => props.filename,
     () => {
         invalidate()
-    },
+    }
 )
 watch(
     () => props.fix,
     () => {
         invalidate()
-    },
+    }
 )
 
 /** init */
