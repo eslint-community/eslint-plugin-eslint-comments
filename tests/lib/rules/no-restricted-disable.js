@@ -7,7 +7,15 @@
 const semver = require("semver")
 const { Linter, RuleTester } = require("eslint")
 const rule = require("../../../lib/rules/no-restricted-disable")
-const coreRules = new Linter({ configType: "eslintrc" }).getRules()
+
+let coreRules
+try {
+    coreRules = require("eslint/use-at-your-own-risk").builtinRules
+} catch {
+    const { Linter } = require("eslint")
+    coreRules = new Linter({ configType: "eslintrc" }).getRules()
+}
+
 let tester = null
 
 if (typeof RuleTester.prototype.defineRule === "function") {
