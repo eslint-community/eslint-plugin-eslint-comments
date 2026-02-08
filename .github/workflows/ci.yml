@@ -49,17 +49,21 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                eslint: [9]
-                node: [18, 20, 22, 24]
+                eslint: [9, 10]
+                node: [20, 22, 24]
                 os: [ubuntu-latest]
                 include:
                     # On other platforms
                     - os: windows-latest
-                      eslint: 9
+                      eslint: 10
                       node: 24
                     - os: macos-latest
-                      eslint: 9
+                      eslint: 10
                       node: 24
+                    # On old Node versions & ESLint v9
+                    - eslint: 9
+                      node: 18
+                      os: ubuntu-latest
                     # On old Node versions & ESLint v8
                     - eslint: 8
                       node: 18.0.0
@@ -110,7 +114,7 @@ jobs:
               run: npm install --legacy-peer-deps
 
             - name: 📥 Install ESLint v${{ matrix.eslint }}
-              run: npm install --save-dev eslint@${{ matrix.eslint }}
+              run: npm install --save-dev eslint@${{ matrix.eslint }} --force
 
             - name: ▶️ Run test script
               run: npm run test

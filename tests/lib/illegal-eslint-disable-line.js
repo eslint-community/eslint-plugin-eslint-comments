@@ -3,11 +3,13 @@
  */
 "use strict"
 
+const semver = require("semver")
 const assert = require("assert")
 const fs = require("fs")
 const path = require("path")
 const spawn = require("cross-spawn")
 const rimraf = require("rimraf")
+const { Linter } = require("eslint")
 
 /**
  * Run eslint CLI command with a given source code.
@@ -73,26 +75,31 @@ describe("multi-line eslint-disable-line comments", () => {
         fs.symlinkSync(selfPath, pluginPath, "junction")
     })
 
-    describe("`@eslint-community/eslint-comments/*` rules are valid", () => {
-        for (const code of [
-            `/* eslint @eslint-community/eslint-comments/no-use:[error, {allow: ['eslint']}] */
+    if (semver.satisfies(Linter.version, "<=9.0.0")) {
+        // `/* eslint-disable-line\n*/` is an error on ESLint 10+
+        // So, we only test on ESLint <=9 here.
+
+        describe("`@eslint-community/eslint-comments/*` rules are valid", () => {
+            for (const code of [
+                `/* eslint @eslint-community/eslint-comments/no-use:[error, {allow: ['eslint']}] */
 /* eslint-disable-line
 */`,
-            `/* eslint @eslint-community/eslint-comments/no-duplicate-disable:error */
+                `/* eslint @eslint-community/eslint-comments/no-duplicate-disable:error */
 /*eslint-disable no-undef*/
 /*eslint-disable-line
 no-undef*/
 `,
-        ]) {
-            it(code, () =>
-                runESLint(code).then((messages) => {
-                    assert.strictEqual(messages.length > 0, true)
-                    const normalMessages = messages.filter(
-                        (message) => message.ruleId != null
-                    )
-                    assert.deepStrictEqual(normalMessages, [])
-                })
-            )
-        }
-    })
+            ]) {
+                it(code, () =>
+                    runESLint(code).then((messages) => {
+                        assert.strictEqual(messages.length > 0, true)
+                        const normalMessages = messages.filter(
+                            (message) => message.ruleId != null
+                        )
+                        assert.deepStrictEqual(normalMessages, [])
+                    })
+                )
+            }
+        })
+    }
 })
