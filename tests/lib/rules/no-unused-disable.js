@@ -77,11 +77,11 @@ function runESLint(code, reportUnusedDisableDirectives = false) {
 
 // This rule does not support for Flat Config yet.
 // So, we only test on ESLint <=9 here.
-const describeOnlyESLintV9 = semver.satisfies(Linter.version, "<=9.0.0")
+const describeOnlyESLintV9OrOlder = semver.satisfies(Linter.version, "<=9.0.0")
     ? describe
     : describe.skip
 
-describeOnlyESLintV9("no-unused-disable", () => {
+describeOnlyESLintV9OrOlder("no-unused-disable", () => {
     before(() => {
         // Register this plugin.
         const selfPath = path.resolve(__dirname, "../../../")
