@@ -12,7 +12,6 @@ let coreRules
 try {
     coreRules = require("eslint/use-at-your-own-risk").builtinRules
 } catch {
-    const { Linter } = require("eslint")
     coreRules = new Linter({ configType: "eslintrc" }).getRules()
 }
 
