@@ -17,16 +17,24 @@ tester.run("no-use", rule, {
         "// exported",
         "// global",
         "// globals",
-        "// eslint-env",
+        ...(semver.satisfies(Linter.version, "<=9.0.0")
+            ? // eslint-env rule was removed in ESLint v10
+              ["// eslint-env"]
+            : []),
         "/* just eslint in a normal comment */",
         {
             code: "/* eslint */",
             options: [{ allow: ["eslint"] }],
         },
-        {
-            code: "/* eslint-env */",
-            options: [{ allow: ["eslint-env"] }],
-        },
+        ...(semver.satisfies(Linter.version, "<=9.0.0")
+            ? // eslint-env rule was removed in ESLint v10
+              [
+                  {
+                      code: "/* eslint-env */",
+                      options: [{ allow: ["eslint-env"] }],
+                  },
+              ]
+            : []),
         {
             code: "/* eslint-enable */",
             options: [{ allow: ["eslint-enable"] }],
@@ -82,10 +90,15 @@ tester.run("no-use", rule, {
             code: "/* eslint */",
             errors: ["Unexpected ESLint directive comment."],
         },
-        {
-            code: "/* eslint-env */",
-            errors: ["Unexpected ESLint directive comment."],
-        },
+        ...(semver.satisfies(Linter.version, "<=9.0.0")
+            ? // eslint-env rule was removed in ESLint v10
+              [
+                  {
+                      code: "/* eslint-env */",
+                      errors: ["Unexpected ESLint directive comment."],
+                  },
+              ]
+            : []),
         {
             code: "/* eslint-enable */",
             errors: ["Unexpected ESLint directive comment."],
