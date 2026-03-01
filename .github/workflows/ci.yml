@@ -151,7 +151,7 @@ jobs:
             fail-fast: false
 
             matrix:
-                eslint: [8, 9]
+                eslint: [8, 9, 10]
                 ts: ["5.0", "5.9"]
 
         steps:
