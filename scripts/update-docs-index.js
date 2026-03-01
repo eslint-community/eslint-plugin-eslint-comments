@@ -38,8 +38,8 @@ fs.writeFileSync(
     path.resolve(__dirname, "../docs/rules/index.md"),
     `# Available Rules
 
-- 🌟 mark: the rule which is enabled by \`@eslint-community/eslint-comments/recommended\` preset.
-- ✒️ mark: the rule which is fixable by \`eslint --fix\` command.
+-   🌟 mark: the rule which is enabled by \`@eslint-community/eslint-comments/recommended\` preset.
+-   ✒️ mark: the rule which is fixable by \`eslint --fix\` command.
 
 ${withCategories.map(toCategorySection).join("\n")}
 `
