@@ -17,19 +17,25 @@ for (const rule of rules) {
         headerLines.push("")
     }
     if (rule.deprecated) {
-        headerLines.push(
-            `- ⚠️ This rule was **deprecated** and replaced by ${rule.replacedBy
-                .map((id) => `[${id}](${id}.md) rule`)
-                .join(", ")}.`
-        )
+        if (rule.replacedBy) {
+            headerLines.push(
+                `-   ⚠️ This rule was **deprecated** and replaced by ${rule.replacedBy
+                    .map((id) => `[${id}](${id}.md) rule`)
+                    .join(", ")}.`
+            )
+        } else {
+            headerLines.push(
+                "-   ⚠️ This rule was **deprecated** and is no longer recommended to use."
+            )
+        }
     } else if (rule.recommended) {
         headerLines.push(
-            '- 🌟 The `"extends": "plugin:@eslint-community/eslint-comments/recommended"` property in a configuration file enables this rule.'
+            '-   🌟 The `"extends": "plugin:@eslint-community/eslint-comments/recommended"` property in a configuration file enables this rule.'
         )
     }
     if (rule.fixable) {
         headerLines.push(
-            "- ✒️ The `--fix` option on the [command line](http://eslint.org/docs/user-guide/command-line-interface#fix) can automatically fix some of the problems reported by this rule."
+            "-   ✒️ The `--fix` option on the [command line](http://eslint.org/docs/user-guide/command-line-interface#fix) can automatically fix some of the problems reported by this rule."
         )
     }
     headerLines.push("", "")

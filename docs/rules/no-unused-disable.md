@@ -2,6 +2,8 @@
 
 > disallow unused `eslint-disable` comments
 
+-   ⚠️ This rule was **deprecated** and is no longer recommended to use.
+
 Since refactoring or a bug fix of upstream, an `eslint-disable` directive-comment may become unnecessary.
 In that case, you should remove the garbage as soon as possible since the garbage may cause to overlook ESLint warnings in future.
 
