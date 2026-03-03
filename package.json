@@ -69,7 +69,7 @@
         "lint": "run-p lint:*",
         "lint:eslint": "eslint lib scripts tests",
         "lint:format": "npm run -s format:check",
-        "test": "nyc npm run debug",
+        "test": "nyc --reporter text npm run debug",
         "test:types": "tsc -p tsconfig.json",
         "preversion": "npm test",
         "version": "node scripts/update && git add .",
