@@ -1,4 +1,4 @@
-import { loadMonacoEditor } from "./monaco-loader.mjs"
+import { DARK_THEME_NAME, loadMonacoEditor } from "./monaco-loader.mjs"
 
 /** Setup editor */
 export async function setupMonacoEditor({
@@ -13,7 +13,7 @@ export async function setupMonacoEditor({
     const options = {
         value: init.value,
         readOnly: init.readOnly,
-        theme: "vs-dark",
+        theme: DARK_THEME_NAME,
         language,
         automaticLayout: true,
         fontSize: 14,
