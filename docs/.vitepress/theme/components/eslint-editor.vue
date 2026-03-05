@@ -30,7 +30,7 @@ function createQuickfixCodeAction(title, marker, model, fix) {
     const start = model.getPositionAt(fix.range[0])
     const end = model.getPositionAt(fix.range[1])
     /**
-     * @type {import('monaco-editor').IRange}
+     * @type {import('modern-monaco/editor-core').IRange}
      */
     const editRange = {
         startLineNumber: start.lineNumber,
