@@ -23,11 +23,6 @@ export default defineConfig({
     vite: {
         publicDir: path.resolve(__dirname, "./public"),
         plugins: [eslint4b(), vitePluginGetLinter(), viteCommonjs()],
-        define: {
-            MONACO_EDITOR_VERSION: JSON.stringify(
-                require("monaco-editor/package.json").version
-            ),
-        },
     },
 
     lastUpdated: true,
