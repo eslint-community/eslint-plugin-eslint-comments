@@ -2,7 +2,10 @@
 
 > require include descriptions in ESLint directive-comments
 
-This rule warns directive comments without description.
+This rule warns directive comments without description. A
+description is separated by the directive name (and optional
+instructions) with two hyphens
+(e.g., `/* eslint-disable no-await-in-loop -- Sequential */`).
 
 :::warning
 This rule can only be used with ESLint v7.x or later.
@@ -59,6 +62,7 @@ You can specify ignored directive-comments.
 ```
 
 -   `ignore` option is an array to ignore specified directive-comments. The value of the array is some of the following strings:
+
     -   `"eslint"`
     -   `"eslint-disable"`
     -   `"eslint-disable-line"`
@@ -68,6 +72,13 @@ You can specify ignored directive-comments.
     -   `"exported"`
     -   `"global"`
     -   `"globals"`
+
+-   `additionalDirectives` - By default, only the above-mentioned
+    ESLint-based comments are checked. If you wish to check other
+    comments, e.g., `istanbul` or `c8` for coverage, you can add them to
+    this string array. Note that as with ESLint directives,
+    descriptions must be preceded by two hyphens. Note that it is possible
+    we may not be able to detect comments for some non-JavaScript languages.
 
 ## Further Reading
 

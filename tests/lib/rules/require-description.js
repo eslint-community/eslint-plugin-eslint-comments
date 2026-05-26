@@ -27,6 +27,7 @@ tester.run("require-description", rule, {
               ["/* eslint-env -- description */"]
             : []),
         "/* just eslint in a normal comment */",
+        "/* c8 without options */",
         "// eslint-disable-line -- description",
         "// eslint-disable-next-line -- description",
         "/* eslint-disable-line -- description */",
@@ -81,6 +82,10 @@ tester.run("require-description", rule, {
         {
             code: "/* globals */",
             options: [{ ignore: ["globals"] }],
+        },
+        {
+            code: "/* c8 ignore next -- description */",
+            options: [{ additionalDirectives: ["c8"] }],
         },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
@@ -231,6 +236,13 @@ tester.run("require-description", rule, {
         // empty description
         {
             code: "/* eslint-disable-next-line eqeqeq -- */",
+            errors: [
+                "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+            ],
+        },
+        {
+            code: "/* c8 ignore next */",
+            options: [{ additionalDirectives: ["c8"] }],
             errors: [
                 "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
             ],
