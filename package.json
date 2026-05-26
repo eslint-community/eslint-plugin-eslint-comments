@@ -97,6 +97,7 @@
         "eslint-plugin-n": "^15.7.0",
         "eslint-plugin-prettier": "^4.2.5",
         "expect-type": "^1.3.0",
+        "fflate": "0.8.2",
         "globals": "^13.24.0",
         "mocha": "^9.2.2",
         "modern-monaco": "0.4.0",
