@@ -120,7 +120,7 @@ jobs:
               run: npm run test
 
             - name: ⬆️ Upload coverage report
-              uses: codecov/codecov-action@v6
+              uses: codecov/codecov-action@v7
 
     are-the-types-wrong:
         name: 🤔 Are the types wrong?
