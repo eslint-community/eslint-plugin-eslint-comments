@@ -84,6 +84,33 @@ tester.run("no-use", rule, {
                   },
               ]
             : []),
+        // oxlint directives
+        "// oxlint-disable",
+        "// oxlint-enable",
+        {
+            code: "/* oxlint-enable */",
+            options: [{ allow: ["oxlint-enable"] }],
+        },
+        {
+            code: "/* oxlint-disable */",
+            options: [{ allow: ["oxlint-disable"] }],
+        },
+        {
+            code: "// oxlint-disable-line",
+            options: [{ allow: ["oxlint-disable-line"] }],
+        },
+        {
+            code: "// oxlint-disable-next-line",
+            options: [{ allow: ["oxlint-disable-next-line"] }],
+        },
+        {
+            code: "/* oxlint-disable-line */",
+            options: [{ allow: ["oxlint-disable-line"] }],
+        },
+        {
+            code: "/* oxlint-disable-next-line */",
+            options: [{ allow: ["oxlint-disable-next-line"] }],
+        },
     ],
     invalid: [
         {
@@ -148,5 +175,30 @@ tester.run("no-use", rule, {
                   },
               ]
             : []),
+        // oxlint directives
+        {
+            code: "/* oxlint-enable */",
+            errors: ["Unexpected ESLint directive comment."],
+        },
+        {
+            code: "/* oxlint-disable */",
+            errors: ["Unexpected ESLint directive comment."],
+        },
+        {
+            code: "// oxlint-disable-line",
+            errors: ["Unexpected ESLint directive comment."],
+        },
+        {
+            code: "// oxlint-disable-next-line",
+            errors: ["Unexpected ESLint directive comment."],
+        },
+        {
+            code: "/* oxlint-disable-line */",
+            errors: ["Unexpected ESLint directive comment."],
+        },
+        {
+            code: "/* oxlint-disable-next-line */",
+            errors: ["Unexpected ESLint directive comment."],
+        },
     ],
 })

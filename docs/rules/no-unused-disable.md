@@ -4,10 +4,10 @@
 
 -   ⚠️ This rule was **deprecated** and is no longer recommended to use.
 
-Since refactoring or a bug fix of upstream, an `eslint-disable` directive-comment may become unnecessary.
+Since refactoring or a bug fix of upstream, an `eslint-disable` or `oxlint-disable` directive-comment may become unnecessary.
 In that case, you should remove the garbage as soon as possible since the garbage may cause to overlook ESLint warnings in future.
 
-This rule warns unnecessary `eslint-disable` directive-comments.
+This rule warns unnecessary `eslint-disable` and `oxlint-disable` directive-comments.
 
 ::: tip
 This rule is deprecated, since you can now use ESLint's built-in [`linterOptions.reportUnusedDisableDirectives`](https://eslint.org/docs/latest/use/configure/rules#report-unused-eslint-disable-comments) to report unused `eslint-disable` comments

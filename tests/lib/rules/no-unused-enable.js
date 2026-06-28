@@ -41,6 +41,17 @@ var a = b
 var a = b
 /*eslint-enable*/
 `,
+        // oxlint directives
+        `
+/*oxlint-disable no-undef*/
+var a = 1
+/*oxlint-enable no-undef*/
+`,
+        `
+/*oxlint-disable no-undef*/
+var a = 1
+/*oxlint-enable*/
+`,
     ],
     invalid: [
         {
@@ -103,5 +114,48 @@ var a = b
                   },
               ]
             : []),
+        // oxlint directives
+        {
+            code: "/*oxlint-enable*/",
+            errors: [
+                {
+                    message:
+                        "ESLint rules are re-enabled but those have not been disabled.",
+                    line: 1,
+                    column: 0,
+                    endLine: 1,
+                    endColumn: 18,
+                },
+            ],
+        },
+        {
+            code: "/*oxlint-enable no-undef*/",
+            errors: [
+                {
+                    message:
+                        "'no-undef' rule is re-enabled but it has not been disabled.",
+                    line: 1,
+                    column: 17,
+                    endLine: 1,
+                    endColumn: 25,
+                },
+            ],
+        },
+        {
+            code: `
+/*oxlint-disable no-unused-vars*/
+/*oxlint-enable no-undef*/
+`,
+            errors: [
+                {
+                    message:
+                        "'no-undef' rule is re-enabled but it has not been disabled.",
+                    line: 3,
+                    column: 17,
+                    endLine: 3,
+                    endColumn: 25,
+                },
+            ],
+        },
     ],
 })
