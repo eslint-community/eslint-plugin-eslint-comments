@@ -26,6 +26,10 @@ Examples of :-1: **incorrect** code for this rule:
 /* exported foo */
 /* global $ */
 /* globals a, b, c */
+/* oxlint-disable eqeqeq */
+/* oxlint-enable eqeqeq */
+// oxlint-disable-line
+// oxlint-disable-next-line
 ```
 
 </eslint-playground>
@@ -68,6 +72,10 @@ You can specify ignored directive-comments.
     -   `"exported"`
     -   `"global"`
     -   `"globals"`
+    -   `"oxlint-disable"`
+    -   `"oxlint-disable-line"`
+    -   `"oxlint-disable-next-line"`
+    -   `"oxlint-enable"`
 
 ## Further Reading
 

@@ -4,10 +4,10 @@
 
 -   🌟 The `"extends": "plugin:@eslint-community/eslint-comments/recommended"` property in a configuration file enables this rule.
 
-Duplicate of `eslint-disable` directive-comments implies that there is a mix of wide-range directive-comments and narrow-range directive-comments.
+Duplicate of `eslint-disable` or `oxlint-disable` directive-comments implies that there is a mix of wide-range directive-comments and narrow-range directive-comments.
 The mix may cause to overlook ESLint warnings in future.
 
-This rule warns duplicate `eslint-disable` directive-comments.
+This rule warns duplicate `eslint-disable` and `oxlint-disable` directive-comments.
 
 ## Rule Details
 

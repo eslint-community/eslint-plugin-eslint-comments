@@ -2,7 +2,7 @@
 
 > disallow `eslint-disable` comments about specific rules
 
-This rule warns `eslint-disable` directive-comments if the comment disable specific rules.
+This rule warns `eslint-disable` and `oxlint-disable` directive-comments if the comment disable specific rules.
 
 ## Rule Details
 

@@ -4,7 +4,7 @@
 
 -   🌟 The `"extends": "plugin:@eslint-community/eslint-comments/recommended"` property in a configuration file enables this rule.
 
-This rule warns `eslint-enable` directive-comments which have no effect.
+This rule warns `eslint-enable` and `oxlint-enable` directive-comments which have no effect.
 
 ## Rule Details
 
