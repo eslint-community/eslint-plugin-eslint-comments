@@ -68,6 +68,22 @@ tester.run("no-restricted-disable", rule, {
                   },
               ]
             : []),
+        // oxlint directives
+        "/*oxlint-disable*/",
+        "//oxlint-disable-line",
+        "//oxlint-disable-next-line",
+        {
+            code: "/*oxlint-disable eqeqeq*/",
+            options: ["no-unused-vars"],
+        },
+        {
+            code: "/*oxlint-enable eqeqeq*/",
+            options: ["eqeqeq"],
+        },
+        {
+            code: "/*oxlint-disable eqeqeq*/",
+            options: ["*", "!eqeqeq"],
+        },
     ],
     invalid: [
         {
@@ -213,5 +229,36 @@ tester.run("no-restricted-disable", rule, {
                   },
               ]
             : []),
+        // oxlint directives
+        {
+            code: "/*oxlint-disable eqeqeq*/",
+            options: ["eqeqeq"],
+            errors: ["Disabling 'eqeqeq' is not allowed."],
+        },
+        {
+            code: "/*oxlint-disable*/",
+            options: ["eqeqeq"],
+            errors: ["Disabling 'eqeqeq' is not allowed."],
+        },
+        {
+            code: "//oxlint-disable-line eqeqeq",
+            options: ["eqeqeq"],
+            errors: ["Disabling 'eqeqeq' is not allowed."],
+        },
+        {
+            code: "//oxlint-disable-next-line eqeqeq",
+            options: ["eqeqeq"],
+            errors: ["Disabling 'eqeqeq' is not allowed."],
+        },
+        {
+            code: "//oxlint-disable-line",
+            options: ["eqeqeq"],
+            errors: ["Disabling 'eqeqeq' is not allowed."],
+        },
+        {
+            code: "//oxlint-disable-next-line",
+            options: ["eqeqeq"],
+            errors: ["Disabling 'eqeqeq' is not allowed."],
+        },
     ],
 })

@@ -92,6 +92,45 @@ var foo = 1
 `,
               ]
             : []),
+        // oxlint directives
+        `
+/*oxlint-disable*/
+/*oxlint-enable*/
+`,
+        `
+/*oxlint-disable no-undef,no-unused-vars*/
+/*oxlint-enable no-undef,no-unused-vars*/
+`,
+        `
+/*oxlint-disable no-undef,no-unused-vars*/
+/*oxlint-enable*/
+`,
+        "//oxlint-disable-line",
+        "//oxlint-disable-next-line",
+        "/*oxlint-disable-line*/",
+        "/*oxlint-disable-next-line*/",
+        {
+            code: `
+/*oxlint-disable*/
+`,
+            options: [{ allowWholeFile: true }],
+        },
+        {
+            code: `
+/*oxlint-disable no-unused-vars, no-undef */
+var foo = 1
+`,
+            options: [{ allowWholeFile: true }],
+        },
+        // -- description
+        ...(semver.satisfies(Linter.version, ">=7.0.0")
+            ? [
+                  `
+/*oxlint-disable no-undef -- description*/
+/*oxlint-enable no-undef*/
+`,
+              ]
+            : []),
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
@@ -270,5 +309,69 @@ console.log();
                   },
               ]
             : []),
+        // oxlint directives
+        {
+            code: `
+/*oxlint-disable*/
+`,
+            errors: [
+                {
+                    message: "Requires 'eslint-enable' directive.",
+                    line: 2,
+                    column: 0,
+                    endLine: 2,
+                    endColumn: 19,
+                },
+            ],
+        },
+        {
+            code: `
+/*oxlint-disable no-undef*/
+`,
+            errors: [
+                {
+                    message:
+                        "Requires 'eslint-enable' directive for 'no-undef'.",
+                    line: 2,
+                    column: 18,
+                    endLine: 2,
+                    endColumn: 26,
+                },
+            ],
+        },
+        {
+            code: `
+/*oxlint-disable no-undef,no-unused-vars*/
+/*oxlint-enable no-undef*/
+`,
+            errors: [
+                {
+                    message:
+                        "Requires 'eslint-enable' directive for 'no-unused-vars'.",
+                    line: 2,
+                    column: 27,
+                    endLine: 2,
+                    endColumn: 41,
+                },
+            ],
+        },
+        {
+            code: `
+/*oxlint-disable no-undef*/
+console.log();
+/*oxlint-disable no-unused-vars*/
+`,
+            options: [{ allowWholeFile: true }],
+            errors: [
+                {
+                    message:
+                        "Requires 'eslint-enable' directive for 'no-unused-vars'.",
+                    line: 4,
+                    column: 18,
+                    endLine: 4,
+                    endColumn: 32,
+                },
+            ],
+        },
     ],
 })
