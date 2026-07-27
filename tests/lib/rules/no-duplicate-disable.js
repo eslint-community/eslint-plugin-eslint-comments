@@ -46,6 +46,13 @@ a {}`,
                   },
               ]
             : []),
+        // oxlint directives
+        `
+/*oxlint-disable no-undef*/
+//oxlint-disable-line no-unused-vars
+//oxlint-disable-next-line semi
+/*oxlint-disable eqeqeq*/
+`,
     ],
     invalid: [
         {
@@ -184,5 +191,36 @@ a {}`,
                   },
               ]
             : []),
+        // oxlint directives
+        {
+            code: `
+/*oxlint-disable no-undef*/
+//oxlint-disable-line no-undef
+`,
+            errors: [
+                {
+                    message: "'no-undef' rule has been disabled already.",
+                    line: 3,
+                    column: 23,
+                    endLine: 3,
+                    endColumn: 31,
+                },
+            ],
+        },
+        {
+            code: `
+/*oxlint-disable no-undef*/
+/*oxlint-disable-next-line no-undef*/
+`,
+            errors: [
+                {
+                    message: "'no-undef' rule has been disabled already.",
+                    line: 3,
+                    column: 28,
+                    endLine: 3,
+                    endColumn: 36,
+                },
+            ],
+        },
     ],
 })

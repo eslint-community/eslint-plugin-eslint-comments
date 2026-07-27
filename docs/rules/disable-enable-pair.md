@@ -4,10 +4,10 @@
 
 -   🌟 The `"extends": "plugin:@eslint-community/eslint-comments/recommended"` property in a configuration file enables this rule.
 
-`eslint-disable` directive-comments disable ESLint rules in all lines preceded by the comment.
-If you forget `eslint-enable` directive-comment, you may overlook ESLint warnings unintentionally.
+`eslint-disable` and `oxlint-disable` directive-comments disable ESLint/oxlint rules in all lines preceded by the comment.
+If you forget the corresponding `eslint-enable` or `oxlint-enable` directive-comment, you may overlook warnings unintentionally.
 
-This rule warns `eslint-disable` directive-comments if the `eslint-enable` directive-comment for that does not exist.
+This rule warns `eslint-disable` and `oxlint-disable` directive-comments if the corresponding enable directive-comment does not exist.
 
 ## Rule Details
 

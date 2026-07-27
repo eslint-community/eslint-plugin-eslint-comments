@@ -4,7 +4,7 @@
 
 -   🌟 The `"extends": "plugin:@eslint-community/eslint-comments/recommended"` property in a configuration file enables this rule.
 
-`eslint-disable` directive-comments disable all rules by default. This may cause to overlook some ESLint warnings unintentionally.
+`eslint-disable` and `oxlint-disable` directive-comments disable all rules by default. This may cause to overlook some ESLint warnings unintentionally.
 So you should specify the rules to disable accurately.
 
 ## Rule Details

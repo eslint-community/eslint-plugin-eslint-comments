@@ -31,6 +31,15 @@ tester.run("no-unlimited-disable", rule, {
                   },
               ]
             : []),
+        // oxlint directives
+        "/*oxlint-enable*/",
+        "/*oxlint-disable eqeqeq*/",
+        "//oxlint-disable-line eqeqeq",
+        "//oxlint-disable-next-line eqeqeq",
+        "/*oxlint-disable-line eqeqeq*/",
+        "/*oxlint-disable-next-line eqeqeq*/",
+        "var foo;\n//oxlint-disable-line eqeqeq",
+        "var foo;\n/*oxlint-disable-line eqeqeq*/",
     ],
     invalid: [
         {
@@ -131,5 +140,42 @@ tester.run("no-unlimited-disable", rule, {
                   },
               ]
             : []),
+        // oxlint directives
+        {
+            code: "/*oxlint-disable */",
+            errors: [
+                "Unexpected unlimited 'oxlint-disable' comment. Specify some rule names to disable.",
+            ],
+        },
+        {
+            code: "//oxlint-disable-line",
+            errors: [
+                "Unexpected unlimited 'oxlint-disable-line' comment. Specify some rule names to disable.",
+            ],
+        },
+        {
+            code: "/*oxlint-disable-line*/",
+            errors: [
+                "Unexpected unlimited 'oxlint-disable-line' comment. Specify some rule names to disable.",
+            ],
+        },
+        {
+            code: "//oxlint-disable-next-line",
+            errors: [
+                "Unexpected unlimited 'oxlint-disable-next-line' comment. Specify some rule names to disable.",
+            ],
+        },
+        {
+            code: "/*oxlint-disable-next-line*/",
+            errors: [
+                "Unexpected unlimited 'oxlint-disable-next-line' comment. Specify some rule names to disable.",
+            ],
+        },
+        {
+            code: "var foo;\n//oxlint-disable-line",
+            errors: [
+                "Unexpected unlimited 'oxlint-disable-line' comment. Specify some rule names to disable.",
+            ],
+        },
     ],
 })

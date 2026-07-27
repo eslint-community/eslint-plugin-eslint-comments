@@ -48,6 +48,16 @@ tester.run("no-aggregating-enable", rule, {
                   },
               ]
             : []),
+        // oxlint directives
+        `
+            /*oxlint-disable no-redeclare*/
+            /*oxlint-enable no-redeclare*/
+        `,
+        `
+            /*oxlint-disable no-redeclare, no-shadow*/
+            /*oxlint-enable no-redeclare*/
+            /*oxlint-enable no-shadow*/
+        `,
     ],
     invalid: [
         {
@@ -115,5 +125,26 @@ tester.run("no-aggregating-enable", rule, {
                   },
               ]
             : []),
+        // oxlint directives
+        {
+            code: `
+                /*oxlint-disable no-redeclare*/
+                /*oxlint-disable no-shadow*/
+                /*oxlint-enable*/
+            `,
+            errors: [
+                "This `eslint-enable` comment affects 2 `eslint-disable` comments. An `eslint-enable` comment should be for an `eslint-disable` comment.",
+            ],
+        },
+        {
+            code: `
+                /*oxlint-disable no-redeclare*/
+                /*oxlint-disable no-shadow*/
+                /*oxlint-enable no-redeclare, no-shadow*/
+            `,
+            errors: [
+                "This `eslint-enable` comment affects 2 `eslint-disable` comments. An `eslint-enable` comment should be for an `eslint-disable` comment.",
+            ],
+        },
     ],
 })

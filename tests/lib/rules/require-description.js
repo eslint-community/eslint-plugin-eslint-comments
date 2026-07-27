@@ -95,6 +95,39 @@ tester.run("require-description", rule, {
                   },
               ]
             : []),
+        // oxlint directives
+        "/* oxlint-disable -- description */",
+        "/* oxlint-enable -- description */",
+        "// oxlint-disable-line -- description",
+        "// oxlint-disable-next-line -- description",
+        "/* oxlint-disable-line -- description */",
+        "/* oxlint-disable-next-line -- description */",
+        "// oxlint-disable-line eqeqeq -- description",
+        "// oxlint-disable-next-line eqeqeq -- description",
+        {
+            code: "/* oxlint-enable */",
+            options: [{ ignore: ["oxlint-enable"] }],
+        },
+        {
+            code: "/* oxlint-disable */",
+            options: [{ ignore: ["oxlint-disable"] }],
+        },
+        {
+            code: "// oxlint-disable-line",
+            options: [{ ignore: ["oxlint-disable-line"] }],
+        },
+        {
+            code: "// oxlint-disable-next-line",
+            options: [{ ignore: ["oxlint-disable-next-line"] }],
+        },
+        {
+            code: "/* oxlint-disable-line */",
+            options: [{ ignore: ["oxlint-disable-line"] }],
+        },
+        {
+            code: "/* oxlint-disable-next-line */",
+            options: [{ ignore: ["oxlint-disable-next-line"] }],
+        },
     ],
     invalid: [
         {
@@ -250,5 +283,60 @@ tester.run("require-description", rule, {
                   },
               ]
             : []),
+        // oxlint directives
+        {
+            code: "/* oxlint-enable */",
+            errors: [
+                "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+            ],
+        },
+        {
+            code: "/* oxlint-disable */",
+            errors: [
+                "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+            ],
+        },
+        {
+            code: "/* oxlint-disable eqeqeq */",
+            errors: [
+                "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+            ],
+        },
+        {
+            code: "// oxlint-disable-line",
+            errors: [
+                "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+            ],
+        },
+        {
+            code: "// oxlint-disable-line eqeqeq",
+            errors: [
+                "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+            ],
+        },
+        {
+            code: "// oxlint-disable-next-line",
+            errors: [
+                "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+            ],
+        },
+        {
+            code: "// oxlint-disable-next-line eqeqeq",
+            errors: [
+                "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+            ],
+        },
+        {
+            code: "/* oxlint-disable-line */",
+            errors: [
+                "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+            ],
+        },
+        {
+            code: "/* oxlint-disable-next-line */",
+            errors: [
+                "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+            ],
+        },
     ],
 })
