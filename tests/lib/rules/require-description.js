@@ -14,6 +14,33 @@ if (!semver.satisfies(Linter.version, ">=7.0.0")) {
     return
 }
 
+// Sibling rules used below to check that the per-source directive-comment
+// cache (shared between all rules linting a file) is not corrupted when
+// rules pass different `additionalDirectives`.
+const noUnlimitedDisableRule = require("../../../lib/rules/no-unlimited-disable")
+const noUseRule = require("../../../lib/rules/no-use")
+const flatRuleTester = semver.satisfies(Linter.version, ">=9.0.0")
+if (!flatRuleTester) {
+    tester.defineRule(
+        "eslint-comments/no-unlimited-disable",
+        noUnlimitedDisableRule
+    )
+    tester.defineRule("eslint-comments/no-use", noUseRule)
+}
+// On the flat RuleTester the sibling rules are supplied per test case instead.
+const siblingPlugins = flatRuleTester
+    ? {
+          plugins: {
+              "eslint-comments": {
+                  rules: {
+                      "no-unlimited-disable": noUnlimitedDisableRule,
+                      "no-use": noUseRule,
+                  },
+              },
+          },
+      }
+    : {}
+
 tester.run("require-description", rule, {
     valid: [
         '/* eslint eqeqeq: "off", curly: "error" -- Here\'s a description about why this configuration is necessary. */',
@@ -87,6 +114,44 @@ tester.run("require-description", rule, {
             code: "/* c8 ignore next -- description */",
             options: [{ additionalDirectives: ["c8"] }],
         },
+        // A sibling rule that reads directive comments with its own
+        // `additionalDirectives` must not leak them into this rule (which
+        // opted into none) through the shared directive-comment cache. Here
+        // `no-use` treats `c8` as a directive (but allows it, so it stays
+        // silent); `require-description` still must not flag it.
+        ...(semver.satisfies(Linter.version, ">=8.0.0")
+            ? [
+                  {
+                      code: "/* c8 ignore next */",
+                      ...siblingPlugins,
+                      rules: {
+                          "eslint-comments/no-use": [
+                              "error",
+                              {
+                                  additionalDirectives: ["c8"],
+                                  allow: ["c8"],
+                              },
+                          ],
+                      },
+                  },
+                  // Two rules that pass the same `additionalDirectives` share
+                  // one cache entry: the second call is served from the cache.
+                  {
+                      code: "/* c8 ignore next -- description */",
+                      options: [{ additionalDirectives: ["c8"] }],
+                      ...siblingPlugins,
+                      rules: {
+                          "eslint-comments/no-use": [
+                              "error",
+                              {
+                                  additionalDirectives: ["c8"],
+                                  allow: ["c8"],
+                              },
+                          ],
+                      },
+                  },
+              ]
+            : []),
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
@@ -247,6 +312,25 @@ tester.run("require-description", rule, {
                 "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
             ],
         },
+        // A sibling rule that reads directive comments without
+        // `additionalDirectives` (here `no-unlimited-disable`) runs first and
+        // must not hide this rule's custom `c8` directive via the shared
+        // directive-comment cache.
+        ...(semver.satisfies(Linter.version, ">=8.0.0")
+            ? [
+                  {
+                      code: "/* c8 ignore next */",
+                      options: [{ additionalDirectives: ["c8"] }],
+                      ...siblingPlugins,
+                      rules: {
+                          "eslint-comments/no-unlimited-disable": "error",
+                      },
+                      errors: [
+                          "Unexpected undescribed directive comment. Include descriptions to explain why the comment is necessary.",
+                      ],
+                  },
+              ]
+            : []),
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
