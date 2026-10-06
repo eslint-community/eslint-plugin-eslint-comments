@@ -15,8 +15,9 @@
 
 ## Stylistic Issues
 
-| Rule ID                                                                                    | Description                                               |     |
-| :----------------------------------------------------------------------------------------- | :-------------------------------------------------------- | :-- |
-| [@eslint-community/eslint-comments/<wbr>no-restricted-disable](./no-restricted-disable.md) | disallow `eslint-disable` comments about specific rules   |     |
-| [@eslint-community/eslint-comments/<wbr>no-use](./no-use.md)                               | disallow ESLint directive-comments                        |     |
-| [@eslint-community/eslint-comments/<wbr>require-description](./require-description.md)     | require include descriptions in ESLint directive-comments |     |
+| Rule ID                                                                                    | Description                                                |     |
+| :----------------------------------------------------------------------------------------- | :--------------------------------------------------------- | :-- |
+| [@eslint-community/eslint-comments/<wbr>no-restricted-disable](./no-restricted-disable.md) | disallow `eslint-disable` comments about specific rules    |     |
+| [@eslint-community/eslint-comments/<wbr>no-use](./no-use.md)                               | disallow ESLint directive-comments                         |     |
+| [@eslint-community/eslint-comments/<wbr>require-arguments](./require-arguments.md)         | require arguments after ESLint or other directive-comments |     |
+| [@eslint-community/eslint-comments/<wbr>require-description](./require-description.md)     | require include descriptions in ESLint directive-comments  |     |
