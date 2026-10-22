@@ -211,7 +211,7 @@ jobs:
               run: npm install --legacy-peer-deps
 
             - name: 🚀 Release
-              uses: cycjimmy/semantic-release-action@v6
+              uses: cycjimmy/semantic-release-action@v8
               with:
                   # semantic-release@v25 is required for trusted publishing.
                   # https://github.com/semantic-release/semantic-release/releases/tag/v25.0.1
