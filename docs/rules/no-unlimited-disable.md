@@ -32,3 +32,27 @@ var foo //eslint-disable-line no-unused-vars
 ```
 
 </eslint-playground>
+
+## Options
+
+You can specify required arguments for directive-comments.
+
+```json
+{
+    "@eslint-community/eslint-comments/no-unlimited-disable": [
+        "error",
+        {
+            "directives": {
+                "eslint-disable": "no-undef",
+                "istanbul": "ignore (if|else|next)"
+            }
+        }
+    ]
+}
+```
+
+-   `directives` option is an object of keys to string regular expressions to
+    specify required arguments for directive-comments. A directive-comment
+    whose kind is listed is reported (with a "Missing argument" message) if
+    its argument does not match the regular expression; other kinds keep the
+    default behavior.
