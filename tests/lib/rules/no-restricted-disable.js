@@ -64,6 +64,11 @@ tester.run("no-restricted-disable", rule, {
             code: "//eslint-disable-next-line eqeqeq,",
             options: ["no-unused-vars"],
         },
+        // Quotes around a rule ID are not part of the rule ID
+        {
+            code: '/*eslint-disable "eqeqeq"*/',
+            options: ["no-unused-vars"],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
@@ -144,6 +149,19 @@ tester.run("no-restricted-disable", rule, {
             code: "//eslint-disable-line eqeqeq,",
             options: ["eqeqeq"],
             errors: ["Disabling 'eqeqeq' is not allowed."],
+        },
+        {
+            code: '/*eslint-disable "eqeqeq"*/',
+            options: ["eqeqeq"],
+            errors: [
+                {
+                    message: "Disabling 'eqeqeq' is not allowed.",
+                    line: 1,
+                    column: 19,
+                    endLine: 1,
+                    endColumn: 25,
+                },
+            ],
         },
         {
             code: "/*eslint-disable*/",

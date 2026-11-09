@@ -41,6 +41,12 @@ var a = b
 var a = b
 /*eslint-enable*/
 `,
+        `
+/*eslint no-undef:error*/
+/*eslint-disable "no-undef"*/
+var a = b
+/*eslint-enable no-undef*/
+`,
     ],
     invalid: [
         {
@@ -79,6 +85,19 @@ var a = b
                     column: 17,
                     endLine: 1,
                     endColumn: 25,
+                },
+            ],
+        },
+        {
+            code: '/*eslint-enable "no-undef"*/',
+            errors: [
+                {
+                    message:
+                        "'no-undef' rule is re-enabled but it has not been disabled.",
+                    line: 1,
+                    column: 18,
+                    endLine: 1,
+                    endColumn: 26,
                 },
             ],
         },
