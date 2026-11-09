@@ -55,6 +55,15 @@ tester.run("no-restricted-disable", rule, {
             code: "/*eslint-disable eqeqeq*/",
             options: ["*", "!eqeqeq"],
         },
+        // Empty entries in the rule list must not crash the `ignore` matcher
+        {
+            code: "/*eslint-disable eqeqeq, */",
+            options: ["no-unused-vars"],
+        },
+        {
+            code: "//eslint-disable-next-line eqeqeq,",
+            options: ["no-unused-vars"],
+        },
         // Language plugin
         ...(semver.satisfies(Linter.version, ">=9.6.0")
             ? [
@@ -124,6 +133,16 @@ tester.run("no-restricted-disable", rule, {
         {
             code: "/*eslint-disable eqeqeq, no-undef, no-redeclare*/",
             options: ["*", "!no-undef", "!no-redeclare"],
+            errors: ["Disabling 'eqeqeq' is not allowed."],
+        },
+        {
+            code: "/*eslint-disable eqeqeq, */",
+            options: ["eqeqeq"],
+            errors: ["Disabling 'eqeqeq' is not allowed."],
+        },
+        {
+            code: "//eslint-disable-line eqeqeq,",
+            options: ["eqeqeq"],
             errors: ["Disabling 'eqeqeq' is not allowed."],
         },
         {

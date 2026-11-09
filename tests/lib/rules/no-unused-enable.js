@@ -70,6 +70,19 @@ var a = b
             ],
         },
         {
+            code: "/*eslint-enable no-undef,*/",
+            errors: [
+                {
+                    message:
+                        "'no-undef' rule is re-enabled but it has not been disabled.",
+                    line: 1,
+                    column: 17,
+                    endLine: 1,
+                    endColumn: 25,
+                },
+            ],
+        },
+        {
             code: `
 /*eslint-disable no-unused-vars*/
 /*eslint-enable no-undef*/
